@@ -1,7 +1,7 @@
 import { AuthPage } from "@/auth/AuthPage";
-import { Home } from "@/Home";
+import { AdminRoutes } from "@/routes/AdminRoutes";
 import type { FC } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 
 export const Router: FC = () => {
   return (
@@ -9,9 +9,8 @@ export const Router: FC = () => {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
 
-        <Route path="/" element={<Home />} />
-
-        <Route path="/*" element={<Navigate to="/auth" />} />
+        <Route path="/*" element={<AdminRoutes />} />
+        {/* <Route path="/*" element={<Navigate to="/auth" />} /> */}
       </Routes>
     </BrowserRouter>
   );
