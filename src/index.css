@@ -1,6 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+#root{
+  background-color: red;
+  min-width: 100dvw;
+  min-height: 100dvh;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

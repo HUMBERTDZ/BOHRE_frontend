@@ -1,18 +1,18 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Outlet } from "react-router";
 
 export const AdminLayout = () => {
-
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-screen grid grid-cols-[auto_1fr] overflow-hidden">
       <AdminSidebar />
-      <main className="w-full min-h-full  p-2 grid grid-rows-1">
-        <ScrollArea className="p-2 rounded-sm bg-gray-100">
-          <SidebarTrigger />
-          <Outlet />
-        </ScrollArea>
+      <main className="relative h-full overflow-hidden">
+        <SidebarTrigger className="absolute top-2 left-2 z-10 bg-gray-300" />
+        <div className="p-2 pt-8 bg-gray-100 min-h-full flex justify-center">
+          <section className="w-5/6">
+            <Outlet />
+          </section>
+        </div>
       </main>
     </SidebarProvider>
   );
