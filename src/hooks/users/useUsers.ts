@@ -1,7 +1,6 @@
 // hooks/useUsers.ts
 import { UserActions } from "@/api/users/actions/UserActions";
 import type { TopLevel, Usuario } from "@/api/users/interfaces/User";
-import type { UsuarioFormData } from "@/components/admin/UsuarioForm";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useUsers = () => {
