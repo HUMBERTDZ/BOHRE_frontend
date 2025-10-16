@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useUsers } from "@/hooks/users/useUsers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "../ui/select";
 import { DatePicker } from "../ui/DatePicker";
-import type { UsuarioFormData } from "./UsuarioForm";
+import type { UsuarioFormData } from "./UsuarioFormInterface";
 import { toast } from "sonner";
 
 interface props {
@@ -15,15 +15,13 @@ interface props {
   setStateDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AgregarUsuario: FC<props> = ({ stateDialogOpen, setStateDialogOpen, }) => {
+export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, }) => {
   // Estado local para el municipio seleccionado
   const [municipioSeleccionado, setMunicipioSeleccionado] = useState<string>("");
 
   // obteniendo funciones desde el hook que obtiene los municipios y localidades
   const { getMunicipios, getLocalidades, agregarUsuarioOptimistic } = useUsers();
 
-  // mutación para agregar usuario
-  const mutation = agregarUsuarioOptimistic();
 
   // desestructurando props desde el hook de municipios
   const { data: municipiosData, isFetching: municipiosIsFetching } =
@@ -39,11 +37,11 @@ export const AgregarUsuario: FC<props> = ({ stateDialogOpen, setStateDialogOpen,
 
   /**
    * funcion para manejar el envio del formulario
-   * @param data
+   * @param data a enviar
    */
   const onSubmit = (data: UsuarioFormData) => {
     console.log(data)
-    mutation.mutate(data, {
+    agregarUsuarioOptimistic.mutate(data, {
       onSuccess: () => {
         toast.success("Usuario agregado exitósamente");
       },
@@ -57,9 +55,9 @@ export const AgregarUsuario: FC<props> = ({ stateDialogOpen, setStateDialogOpen,
     reset(); // Limpia el formulario
   };
 
+  // función para manejar la cancelación del formulario
   const handleCancel = () => {
     reset();
-    setMunicipioSeleccionado(""); // Limpiar también el municipio
     setStateDialogOpen(false);
   };
 
@@ -321,22 +319,22 @@ export const AgregarUsuario: FC<props> = ({ stateDialogOpen, setStateDialogOpen,
                   id="nss"
                   type="text"
                   placeholder="NSS"
-                  maxLength={50}
-                  {...register("nss", {
+                  maxLength={12}
+                    {...register("nss", {
                     required: "El NSS es requerido",
                     minLength: {
-                      value: 3,
-                      message: "El NSS debe tener mínimo 3 caracteres",
+                      value: 11,
+                      message: "El NSS debe tener mínimo 11 caracteres",
                     },
                     maxLength: {
-                      value: 50,
-                      message: "El NSS debe tener máximo 50 caracteres",
+                      value: 12,
+                      message: "El NSS debe tener máximo 12 caracteres",
                     },
                     pattern: {
-                      value: /^[0-9]+$/,
-                      message: "Solo se permiten números",
+                      value: /^[a-zA-Z0-9]+$/,
+                      message: "Solo se permiten números y letras, sin caracteres especiales",
                     },
-                  })}
+                    })}
                 />
                 {errors.nss && (
                   <span className="text-xs block relative -top-1 text-red-400">

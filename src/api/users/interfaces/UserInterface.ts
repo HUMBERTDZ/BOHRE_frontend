@@ -32,7 +32,18 @@ export interface PaginatedData<T> {
   total: number;
 }
 
-export interface TopLevel {
+export interface ResponseUserPaginated {
   message: string;
   data: PaginatedData<Usuario>;
+}
+
+// cuando se agrega un usuario esta es la respuesta http
+export interface ResponseAddUser {
+  message: string;
+  data: Usuario;
+}
+
+export interface GeneralResponse {
+  message: string;
+  data: null;
 }

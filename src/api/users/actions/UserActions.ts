@@ -1,10 +1,13 @@
 // actions/UserActions.ts
-import type { UsuarioFormData } from "@/components/admin/UsuarioForm";
-import { BaseAPI } from "../BaseAPI";
+import type { UsuarioFormData } from "@/components/admin/UsuarioFormInterface";
+import { BaseAPI } from "../../BaseAPI";
 import type { TopLevelLocalidades } from "../interfaces/Localidades";
 import type { TopLevelMunicipios } from "../interfaces/Municipios";
-import type { TopLevel } from "../interfaces/User";
+import type { GeneralResponse, ResponseAddUser, ResponseUserPaginated } from "../interfaces/UserInterface";
 import { UsersAPI } from "../UsersAPI";
+import axios from "axios";
+import { Waiter } from "@/utils/Waiter";
+import { toast } from "sonner";
 
 export const UserActions = () => {
   const fetchMunicipios = async (): Promise<TopLevelMunicipios> => {
@@ -22,13 +25,36 @@ export const UserActions = () => {
   /**
    * obtiene a los usuarios con paginación
    * @param page número de página (default: 1)
-   * @returns { TopLevel } Data de la interface usuario paginada
+   * @returns { ResponseUserPaginated } Data de la interface usuario paginada
    */
-  const fetchUsers = async (page: number = 1): Promise<TopLevel> => {
-    const response = await UsersAPI.get<TopLevel>("/", {
-      params: { page },
-    });
-    return response.data;
+  const fetchUsers = async (page: number = 1): Promise<ResponseUserPaginated> => {
+    //await Waiter(5000); // Simula retardo de 5 segundos
+    try {
+      const response = await UsersAPI.get<ResponseUserPaginated>("/", {
+        params: { page },
+      });
+      
+      toast.success(response.data.message || 'Usuarios cargados.');
+
+      return response.data;
+      
+    } catch (error) {
+      // Tipar el error correctamente
+      if (axios.isAxiosError<GeneralResponse>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || 'Error del servidor.');
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error('No se pudo conectar con el servidor.');
+        }
+
+        // Error desconocido
+        throw new Error('Ocurrió un error inesperado.');
+      }
+
+      // Si el error no es AxiosError, lanzar un error genérico
+      throw new Error('Ocurrió un error inesperado.');
+    }
   };
 
   /**
@@ -37,7 +63,17 @@ export const UserActions = () => {
    * @returns
    */
   const addUser = async (data: UsuarioFormData) => {
-    const response = await UsersAPI.post<TopLevel>("/", data);
+    const response = await UsersAPI.post<ResponseAddUser>("/", data);
+    return response.data;
+  };
+
+  /**
+   * Elimina un usuario por su ID person
+   * @param userId
+   * @returns
+   */
+  const deleteUser = async (userId: number) => {
+    const response = await UsersAPI.delete<GeneralResponse>(`/` + userId);
     return response.data;
   };
 
@@ -46,5 +82,6 @@ export const UserActions = () => {
     fetchMunicipios,
     fetchLocalidades,
     addUser,
+    deleteUser,
   };
 };

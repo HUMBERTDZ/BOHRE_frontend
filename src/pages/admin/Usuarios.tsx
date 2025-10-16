@@ -1,34 +1,41 @@
-import { AgregarUsuario } from "@/components/admin/UsuarioFormData";
+import { UsuarioForm } from "@/components/admin/UsuarioForm";
 import { Button } from "@/components/ui/button";
-import { Columns } from "@/components/users/Columns";
+import { createColumns, AlertDialogEliminar } from "@/components/users/Columns";
 import { DataTable } from "@/components/users/DataTable";
 import { useUsers } from "@/hooks/users/useUsers";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
+import type { Usuario } from "@/api/users/interfaces/UserInterface";
+import { Loading } from "@/components/ui/Loading";
 
 export const Usuarios = () => {
-  // obteniendo funcion desde hook que obtiene los usuarios
-  const { getUsers } = useUsers();
-
-  // desestructurando props desde el hook
-  const { data, error, isFetching, isSuccess, isError } = getUsers();
-
-  // estado para abrir modal
+  // funciones de usuarios con el custom hook
+  const { getUsers, eliminarUsuarioOptimistic } = useUsers();
+  
+  // obtener los usuarios
+  const { data, isFetching } = getUsers();
+  
+  // estado para el dialogo de agregar usuario manualmente
   const [stateDialogOpen, setStateDialogOpen] = useState<boolean>(false);
 
-  // efecto para mostrar un toast si se cargaron los usuarios o no
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Usuarios cargados");
-    }
-    if (isError) {
-      toast.error("Error al cargar usuarios");
-      console.error(error);
-    }
-  }, [isSuccess, isError, error]);
+  // estado para setear el usuario a eliminar
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState<Usuario | null>(null);
+
+  // Crear columnas con el callback de eliminación
+  const columns = createColumns((usuario) => setUsuarioAEliminar(usuario));
+
+  /**
+   * eliminar usuario
+   * @param id id de usuario a eliminar
+   */
+  const handleEliminar = (id: string) => {
+    // llamada a la mutación para eliminar usuario
+    eliminarUsuarioOptimistic.mutate(Number(id));
+    // cerrar el dialogo
+    setUsuarioAEliminar(null);
+  };
 
   if (isFetching) {
-    return <div className="p-8 text-center">Cargando usuarios...</div>;
+    return <Loading message="Cargando usuarios..." />;
   }
 
   return (
@@ -41,12 +48,25 @@ export const Usuarios = () => {
       </header>
 
       <main>
-        {/* formulario para agregar usuario */}
-        <AgregarUsuario stateDialogOpen={stateDialogOpen} setStateDialogOpen={setStateDialogOpen}  />
+        <UsuarioForm stateDialogOpen={stateDialogOpen} setStateDialogOpen={setStateDialogOpen} />
 
-        <DataTable columns={Columns} data={data?.data.data || []}>
-          <Button onClick={ () => { setStateDialogOpen(true) } }>Agregar usuario</Button>
+        <DataTable columns={columns} data={data?.data.data || []}>
+          <div className="flex items-center gap-2">
+          <Button onClick={() => setStateDialogOpen(true)}>
+            Recuperar eliminados
+          </Button>
+          <Button onClick={() => setStateDialogOpen(true)}>
+            Agregar usuario
+          </Button>
+          </div>
         </DataTable>
+
+        <AlertDialogEliminar
+          usuario={usuarioAEliminar}
+          open={!!usuarioAEliminar}
+          onOpenChange={(open) => !open && setUsuarioAEliminar(null)}
+          onConfirm={handleEliminar}
+        />
       </main>
     </>
   );

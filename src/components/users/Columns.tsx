@@ -1,16 +1,11 @@
-import type { Datum } from "@/api/users/interfaces/User";
+import type { Usuario } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "../ui/alert-dialog";
+import type { FC } from "react";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -24,119 +19,147 @@ const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
 };
 
 // pequeño componente para reutilizar el button
-const SortButton = ({
-  column,
-  text,
-}: {
-  column: Column<any, any>;
-  text: string;
-}) => {
+const SortButton = ({ column, text, }: { column: Column<any, any>; text: string; }) => {
   return (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    >
+    <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} >
       {text}
       <SortedIcon isSorted={column.getIsSorted()} />
     </Button>
   );
 };
 
-export const Columns: ColumnDef<Datum>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todo"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Seleccionar fila"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => {
-      const id = row.getValue("id") as string;
-      return <span className="font-medium">{id}</span>;
+// Función que crea las columnas (sin hooks)
+export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef<Usuario>[] => {
+  return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Seleccionar todo"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Seleccionar fila"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "nombre",
-    header: ({ column }) => {
-      return <SortButton column={column} text="NOMBRE DE CLIENTE" />;
+    {
+      accessorKey: "id",
+      header: "ID",
+      cell: ({ row }) => {
+        const id = row.getValue("id") as string;
+        return <span className="font-medium">{id}</span>;
+      },
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: "apellidoPaterno",
-    header: ({ column }) => {
-      return <SortButton column={column} text="APELLIDO PATERNO" />;
+    {
+      accessorKey: "nombre",
+      header: ({ column }) => {
+        return <SortButton column={column} text="NOMBRE" />;
+      },
     },
-  },
-  {
-    accessorKey: "apellidoMaterno",
-    header: ({ column }) => {
-      return <SortButton column={column} text="APELLIDO MATERNO" />;
+    {
+      accessorKey: "apellidoPaterno",
+      header: ({ column }) => {
+        return <SortButton column={column} text="APELLIDO PATERNO" />;
+      },
     },
-  },
-  {
-    accessorKey: "curp",
-    header: ({ column }) => {
-      return <SortButton column={column} text="CURP" />;
+    {
+      accessorKey: "apellidoMaterno",
+      header: ({ column }) => {
+        return <SortButton column={column} text="APELLIDO MATERNO" />;
+      },
     },
-  },
-  {
-    accessorKey: "sexo",
-    header: ({ column }) => {
-      return <SortButton column={column} text="SEXO" />;
+    {
+      accessorKey: "curp",
+      header: ({ column }) => {
+        return <SortButton column={column} text="CURP" />;
+      },
     },
-  },
-  {
-    accessorKey: "nss",
-    header: ({ column }) => {
-      return <SortButton column={column} text="NSS" />;
+    {
+      accessorKey: "sexo",
+      header: ({ column }) => {
+        return <SortButton column={column} text="SEXO" />;
+      },
     },
-  },
-  {
-    accessorKey: "rol",
-    header: ({ column }) => {
-      return <SortButton column={column} text="ROL" />;
+    {
+      accessorKey: "nss",
+      header: ({ column }) => {
+        return <SortButton column={column} text="NSS" />;
+      },
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => { console.log(original) }}>Actualizar</DropdownMenuItem>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-            <DropdownMenuItem>Ver detalles</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+      accessorKey: "rol",
+      header: ({ column }) => {
+        return <SortButton column={column} text="ROL" />;
+      },
     },
-  },
-];
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const { original } = row;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => { console.log(original); }}>
+                Actualizar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(original)} >
+                Eliminar
+              </DropdownMenuItem>
+              <DropdownMenuItem onMouseEnter={() => console.log(`fetch a ${original.nombre}`)} >Ver detalles</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+};
+
+// Componente del AlertDialog de eliminación
+interface AlertDialogEliminarProps {
+  usuario: Usuario | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: (id: string) => void;
+}
+
+export const AlertDialogEliminar:FC<AlertDialogEliminarProps> = ({ usuario, open, onOpenChange, onConfirm, }) => {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Eliminar usuario</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esto eliminará el usuario {usuario?.nombre}{" "}
+            {usuario?.apellidoPaterno} {usuario?.apellidoMaterno}. ¿Estás seguro?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={() => { onConfirm(usuario!.id.toString()); }} >
+            Continuar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
