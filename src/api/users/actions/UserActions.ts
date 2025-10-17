@@ -38,7 +38,7 @@ export const UserActions = () => {
   ): Promise<ResponseUserPaginated> => {
     //await Waiter(5000); // Simula retardo de 5 segundos
     try {
-      const response = await UsersAPI.get<ResponseUserPaginated>("/", {
+      const response = await UsersAPI.get<ResponseUserPaginated>("", {
         params: { page },
       });
 

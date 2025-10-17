@@ -13,9 +13,12 @@ import { Undo, UserPlusIcon } from "lucide-react";
 export const Usuarios = () => {
   // funciones de usuarios con el custom hook
   const { getUsers, prefetchUsersDeleted, eliminarUsuarioOptimistic } = useUsers();
+
+  // estado para paginación de usuarios
+  const [page, setPage] = useState<number>(1);
   
   // obtener los usuarios
-  const { data, isFetching } = getUsers();
+  const { data, isFetching } = getUsers(page);
   
   // estado para el dialogo de agregar usuario manualmente
   const [stateDialogOpen, setStateDialogOpen] = useState<boolean>(false);
@@ -57,10 +60,17 @@ export const Usuarios = () => {
 
       <main>
         {/* formulario de usuario */}
-        <UsuarioForm stateDialogOpen={stateDialogOpen} setStateDialogOpen={setStateDialogOpen} />
+        <UsuarioForm stateDialogOpen={stateDialogOpen} setStateDialogOpen={setStateDialogOpen}  />
 
         {/* tabla de usuarios */}
-        <DataTable columns={columns} data={data?.data.data || []}>
+        <DataTable columns={columns} data={data?.data.data || []}  
+          pagination={{
+              currentPage: data?.data.current_page || 1,
+              lastPage: data?.data.last_page || 1,
+              total: data?.data.total || 0,
+              onPageChange: setPage,
+            }}
+        >
           <>
             <Button onMouseEnter={prefetchUsersDeleted}  onClick={() => setStateDialogUsersDeleted(true)} variant={"outline"}>
               <Undo />

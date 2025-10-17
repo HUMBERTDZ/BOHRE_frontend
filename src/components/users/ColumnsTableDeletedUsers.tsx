@@ -2,7 +2,7 @@ import type { Usuario } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronUp, MoreHorizontal, Trash, Undo } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
 
 // pequeño componente para definir el icono
@@ -117,11 +117,13 @@ export const createColumns = ( onDeleteForce: (usuario: Usuario) => void, onReco
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onRecover(original)} >
+              <DropdownMenuItem onClick={() => onRecover(original)} className="focus:bg-green-100 focus:text-green-500 text-green-500 ">
+                <Undo className="text-current" />
                 Recuperar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDeleteForce(original)} >
-                Eliminar
+              <DropdownMenuItem onClick={() => onDeleteForce(original)} className="focus:bg-red-100 focus:text-red-500 text-red-500 " >
+                <Trash className="text-current" />
+                 Eliminar
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

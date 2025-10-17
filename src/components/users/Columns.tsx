@@ -2,7 +2,7 @@ import type { Usuario } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Trash, UserPen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "../ui/alert-dialog";
 import type { FC } from "react";
@@ -119,13 +119,18 @@ export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => { console.log(original); }}>
+              <DropdownMenuItem onClick={() => console.log(original)} className="focus:bg-green-100 focus:text-green-500 text-green-500">
+                <UserPen className="text-current" />
                 Actualizar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(original)} >
+              <DropdownMenuItem onClick={() => onDelete(original)}  className="focus:bg-red-100 focus:text-red-500 text-red-500">
+                <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => console.log(`fetch a ${original.nombre}`)} >Ver detalles</DropdownMenuItem>
+              <DropdownMenuItem onMouseEnter={() => console.log(`fetch a ${original.nombre}`)} >
+                <Eye />
+                Ver detalles
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

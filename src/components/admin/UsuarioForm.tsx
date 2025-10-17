@@ -73,7 +73,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
         <form id="usersForm" onSubmit={handleSubmit(onSubmit)} >
           <Tabs defaultValue="generales">
             
-            <TabsList className="w-fit h-fit mb-4">
+            <TabsList className="w-full h-fit mb-4">
               <TabsTrigger value="generales">Datos Generales</TabsTrigger>
               <TabsTrigger value="cuenta">Contacto y Cuenta</TabsTrigger>
               <TabsTrigger value="direccion">Dirección</TabsTrigger>
