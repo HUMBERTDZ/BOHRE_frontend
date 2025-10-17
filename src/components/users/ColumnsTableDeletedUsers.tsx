@@ -4,8 +4,6 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "../ui/alert-dialog";
-import type { FC } from "react";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -29,7 +27,7 @@ const SortButton = ({ column, text, }: { column: Column<any, any>; text: string;
 };
 
 // Función que crea las columnas (sin hooks)
-export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef<Usuario>[] => {
+export const createColumns = ( onDeleteForce: (usuario: Usuario) => void, onRecover: (usuario: Usuario) => void ): ColumnDef<Usuario>[] => {
   return [
     {
       id: "select",
@@ -119,47 +117,16 @@ export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => { console.log(original); }}>
-                Actualizar
+              <DropdownMenuItem onClick={() => onRecover(original)} >
+                Recuperar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(original)} >
+              <DropdownMenuItem onClick={() => onDeleteForce(original)} >
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => console.log(`fetch a ${original.nombre}`)} >Ver detalles</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
     },
   ];
-};
-
-// Componente del AlertDialog de eliminación
-interface AlertDialogEliminarProps {
-  usuario: Usuario | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
-}
-
-export const AlertDialogEliminar:FC<AlertDialogEliminarProps> = ({ usuario, open, onOpenChange, onConfirm, }) => {
-  return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Eliminar usuario</AlertDialogTitle>
-          <AlertDialogDescription>
-            Esto eliminará el usuario {usuario?.nombre}{" "}
-            {usuario?.apellidoPaterno} {usuario?.apellidoMaterno}. ¿Estás seguro?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} >
-            Continuar
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
 };

@@ -16,7 +16,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router />
-      <Toaster richColors />
+      <Toaster richColors position="top-right" />
       <ReactQueryDevtools initialIsOpen={true} />
     </QueryClientProvider>
   );

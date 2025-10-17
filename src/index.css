@@ -2,7 +2,6 @@
 @import "tw-animate-css";
 
 #root{
-  background-color: red;
   min-width: 100dvw;
   min-height: 100dvh;
   max-width: 100dvw;

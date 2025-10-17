@@ -37,6 +37,11 @@ export interface ResponseUserPaginated {
   data: PaginatedData<Usuario>;
 }
 
+export interface ResponseUsersDeleted {
+  message: string;
+  data: Usuario[];
+}
+
 // cuando se agrega un usuario esta es la respuesta http
 export interface ResponseAddUser {
   message: string;
