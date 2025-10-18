@@ -1,5 +1,5 @@
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "../ui/alert-dialog";
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -10,24 +10,32 @@ import { DatePicker } from "../ui/DatePicker";
 import type { UsuarioFormData } from "./UsuarioFormInterface";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import type { UserSemiComplete } from "@/api/users/interfaces/UserInterface";
 
 interface props {
   stateDialogOpen: boolean;
   setStateDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  update?: {
+    userToUpdate?: UserSemiComplete | null;
+    handleCloseDialog?: () => void;
+    handleSuccessUpdate?: () => void;
+  };
 }
 
-export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, }) => {
+export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, update, }) => {
+  // estado para almacenar los valores iniciales del formulario
+  const [valoresIniciales, setValoresIniciales] = useState<UsuarioFormData | null>(null);
+
   // Estado local para el municipio seleccionado
   const [municipioSeleccionado, setMunicipioSeleccionado] = useState<string>("");
 
   // obteniendo funciones desde el hook que obtiene los municipios y localidades
-  const { getMunicipios, getLocalidades, agregarUsuarioOptimistic } = useUsers();
-
+  const { getMunicipios, getLocalidades, agregarUsuarioOptimistic, actualizarUsuarioOptimistic, } = useUsers();
 
   // desestructurando props desde el hook de municipios
   const { data: municipiosData, isFetching: municipiosIsFetching } = getMunicipios();
 
-  const { register, handleSubmit, formState: { errors }, control, reset, watch, } = useForm<UsuarioFormData>({ defaultValues: { fechaNacimiento: undefined }, });
+  const { register, handleSubmit, formState: { errors }, control, reset, watch, } = useForm<UsuarioFormData>({ defaultValues: { fechaNacimiento: undefined } });
 
   // Observar el valor del rol seleccionado
   const rolSeleccionado = watch("rol");
@@ -36,29 +44,162 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
   const { data: localidadesData, isFetching: localidadesIsFetching } = getLocalidades(municipioSeleccionado ? parseInt(municipioSeleccionado) : 0);
 
   /**
+   * Convertir UserSemiComplete a UsuarioFormData
+   */
+  const convertirAFormData = (user: UserSemiComplete): UsuarioFormData => {
+    return {
+      ...user,
+      rol: user.rol.toLowerCase(),
+      sexo: user.sexo.charAt(0), // Solo primera letra
+      fechaNacimiento: new Date(user.fechaNacimiento),
+      contrasena: "", // No viene del backend
+      cedulaProfesional: user.cedulaProfesional || "",
+      numeroExpediente: user.numeroExpediente || 0,
+      nia: user.nia || "",
+      situacion: user.situacion?.toLowerCase() || "",
+    };
+  };
+
+  /**
+   * funcion para detectar cambios en el formulario
+   * @param datosActuales datos actuales del formulario
+   * @returns objeto con solo los campos que cambiaron
+   */
+  const detectarCambios = ( datosActuales: UsuarioFormData ): Record<string, any> => {
+    if (!valoresIniciales || !update?.userToUpdate) {
+      return datosActuales; // Modo crear, enviar todo
+    }
+
+    const cambios: Record<string, any> = {}; // SIN ID aquí
+
+    // Comparación de strings
+    const camposString = [ "nombre", "apellidoPaterno", "apellidoMaterno", "curp", "telefono", "sexo", "nss", "correo", "rol", "calle", "cedulaProfesional", "nia", "situacion", ] as const;
+
+    camposString.forEach((campo) => {
+      const valorInicial = valoresIniciales[campo] as string;
+      const valorActual = datosActuales[campo] as string;
+
+      if (valorActual?.trim() !== valorInicial?.trim()) {
+        cambios[campo] = valorActual;
+      }
+    });
+
+    // Comparación de números
+    const camposNumero = [ "numeroCasa", "idLocalidad", "numeroExpediente", ] as const;
+
+    camposNumero.forEach((campo) => {
+      const valorInicial = valoresIniciales[campo] as number;
+      const valorActual = datosActuales[campo] as number;
+
+      if (valorActual !== valorInicial) {
+        cambios[campo] = valorActual;
+      }
+    });
+
+    // Comparación de fecha
+    const fechaInicial = valoresIniciales.fechaNacimiento
+      ? new Date(valoresIniciales.fechaNacimiento).toISOString().split("T")[0]
+      : null;
+    const fechaActual = datosActuales.fechaNacimiento
+      ? new Date(datosActuales.fechaNacimiento).toISOString().split("T")[0]
+      : null;
+
+    if (fechaInicial !== fechaActual) {
+      cambios.fechaNacimiento = datosActuales.fechaNacimiento;
+    }
+
+    // Si hay contraseña nueva, incluirla
+    if (datosActuales.contrasena && datosActuales.contrasena.trim() !== "") {
+      cambios.contrasena = datosActuales.contrasena;
+    }
+
+    return cambios; // Solo los cambios, sin ID
+  };
+
+  /**
    * funcion para manejar el envio del formulario
    * @param data a enviar
    */
   const onSubmit = (data: UsuarioFormData) => {
-    agregarUsuarioOptimistic.mutate(data, {
-      onSuccess: () => {
-        toast.success("Usuario agregado exitósamente");
-      },
-      onError: (error) => {
-        console.log(error);
-        toast.error(`Error al agregar usuario... ${error.message}}`);
-      },
-    });
-    
-    setStateDialogOpen(false); // Solo se cierra si la validación pasó
-    reset(); // Limpia el formulario
+    if (update?.userToUpdate) {
+      // Modo actualización - enviar solo los cambios
+      const cambios = detectarCambios(data);
+
+      // Verificar si hay cambios
+      const tieneCambios = Object.keys(cambios).length > 0;
+
+      if (!tieneCambios) {
+        toast.info("No hay cambios para actualizar");
+        return;
+      }
+
+      // Usar la mutación optimista
+      actualizarUsuarioOptimistic.mutate(
+        {
+          userId: update.userToUpdate.id, // El ID va aquí
+          data: cambios,
+        },
+        {
+          onSuccess: () => {
+            // Limpiar formulario y estados
+            reset();
+            setMunicipioSeleccionado("");
+            setValoresIniciales(null);
+            update?.handleSuccessUpdate?.();
+            setStateDialogOpen(false);
+          },
+          onError: (error) => {
+            console.error("Error al actualizar:", error);
+          },
+        }
+      );
+    } else {
+      // Modo creación - enviar todo
+      console.log("✨ Creando nuevo usuario:", data);
+
+      agregarUsuarioOptimistic.mutate(data, {
+        onSuccess: () => {
+          toast.success("Usuario agregado exitósamente");
+          reset();
+          setMunicipioSeleccionado("");
+          setStateDialogOpen(false);
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error(`Error al agregar usuario... ${error.message}`);
+        },
+      });
+    }
   };
 
-  // función para manejar la cancelación del formulario
+  /**
+   * Función para manejar la cancelación del formulario
+   */
   const handleCancel = () => {
     reset();
+    setMunicipioSeleccionado("");
+    update?.handleCloseDialog?.();
     setStateDialogOpen(false);
   };
+
+  
+  /**
+   * Cargar datos del usuario cuando se va a actualizar
+   */
+  useEffect(() => {
+    if (stateDialogOpen && update?.userToUpdate) {
+      const userToUpdate = update.userToUpdate;
+      const datosFormateados = convertirAFormData(userToUpdate);
+
+      reset(datosFormateados);
+      setValoresIniciales(datosFormateados); // Guardar valores iniciales
+      setMunicipioSeleccionado(userToUpdate.idMunicipio.toString());
+    } else if (stateDialogOpen && !update?.userToUpdate) {
+      reset({ fechaNacimiento: undefined } as any);
+      setMunicipioSeleccionado("");
+      setValoresIniciales(null);
+    }
+  }, [stateDialogOpen, update?.userToUpdate, reset]);
 
   return (
     <AlertDialog open={stateDialogOpen} onOpenChange={setStateDialogOpen}>
@@ -70,9 +211,8 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form id="usersForm" onSubmit={handleSubmit(onSubmit)} >
+        <form id="usersForm" onSubmit={handleSubmit(onSubmit)}>
           <Tabs defaultValue="generales">
-            
             <TabsList className="w-full h-fit mb-4">
               <TabsTrigger value="generales">Datos Generales</TabsTrigger>
               <TabsTrigger value="cuenta">Contacto y Cuenta</TabsTrigger>
@@ -85,13 +225,10 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
             <TabsContent value="generales" className="space-y-2">
               {/* Datos generales */}
               <fieldset className="space-y-2">
-
                 <div className="grid grid-cols-3 gap-2">
                   {/* nombre */}
                   <div className="space-y-2">
-                    <Label htmlFor="nombre" className="block text-sm font-medium">
-                      Nombre(s)
-                    </Label>
+                    <Label htmlFor="nombre" className="block text-sm font-medium">Nombre(s)</Label>
                     <Input
                       id="nombre"
                       type="text"
@@ -123,9 +260,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* apellido paterno */}
                   <div className="space-y-2">
-                    <Label htmlFor="apellidoPaterno" className="block text-sm font-medium">
-                      Apellido paterno
-                    </Label>
+                    <Label htmlFor="apellidoPaterno" className="block text-sm font-medium">Apellido paterno</Label>
                     <Input
                       id="apellidoPaterno"
                       type="text"
@@ -139,7 +274,8 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                         },
                         maxLength: {
                           value: 20,
-                          message: "El apellido debe tener máximo 20 caracteres",
+                          message:
+                            "El apellido debe tener máximo 20 caracteres",
                         },
                         pattern: {
                           value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
@@ -157,9 +293,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* apellido materno */}
                   <div className="space-y-2">
-                    <Label htmlFor="apellidoMaterno" className="block text-sm font-medium">
-                      Apellido materno
-                    </Label>
+                    <Label htmlFor="apellidoMaterno" className="block text-sm font-medium">Apellido materno</Label>
                     <Input
                       id="apellidoMaterno"
                       type="text"
@@ -173,7 +307,8 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                         },
                         maxLength: {
                           value: 20,
-                          message: "El apellido debe tener máximo 20 caracteres",
+                          message:
+                            "El apellido debe tener máximo 20 caracteres",
                         },
                         pattern: {
                           value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
@@ -191,9 +326,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* sexo */}
                   <div className="space-y-2">
-                    <Label htmlFor="sexo" className="block text-sm font-medium">
-                      Sexo
-                    </Label>
+                    <Label htmlFor="sexo" className="block text-sm font-medium">Sexo</Label>
                     <Controller
                       name="sexo"
                       control={control}
@@ -231,7 +364,9 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                           notFuture: (value) => {
                             if (!value) return true;
                             const selectedDate =
-                              typeof value === "string" ? new Date(value) : value;
+                              typeof value === "string"
+                                ? new Date(value)
+                                : value;
                             return (
                               selectedDate <= new Date() ||
                               "La fecha no puede ser futura"
@@ -240,7 +375,9 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                           minAge: (value) => {
                             if (!value) return true;
                             const selectedDate =
-                              typeof value === "string" ? new Date(value) : value;
+                              typeof value === "string"
+                                ? new Date(value)
+                                : value;
                             const today = new Date();
                             const age =
                               today.getFullYear() - selectedDate.getFullYear();
@@ -255,7 +392,9 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                                 ? age - 1
                                 : age;
 
-                            return actualAge >= 12 || "Debe tener al menos 12 años";
+                            return (
+                              actualAge >= 12 || "Debe tener al menos 12 años"
+                            );
                           },
                         },
                       }}
@@ -280,9 +419,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* curp */}
                   <div className="space-y-2">
-                    <Label htmlFor="curp" className="block text-sm font-medium">
-                      CURP
-                    </Label>
+                    <Label htmlFor="curp" className="block text-sm font-medium">CURP</Label>
                     <Input
                       id="curp"
                       type="text"
@@ -314,15 +451,13 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* nss */}
                   <div className="space-y-2">
-                    <Label htmlFor="nss" className="block text-sm font-medium">
-                      NSS
-                    </Label>
+                    <Label htmlFor="nss" className="block text-sm font-medium">NSS</Label>
                     <Input
                       id="nss"
                       type="text"
                       placeholder="NSS"
                       maxLength={12}
-                        {...register("nss", {
+                      {...register("nss", {
                         required: "El NSS es requerido",
                         minLength: {
                           value: 11,
@@ -334,9 +469,10 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                         },
                         pattern: {
                           value: /^[a-zA-Z0-9]+$/,
-                          message: "Solo se permiten números y letras, sin caracteres especiales",
+                          message:
+                            "Solo se permiten números y letras, sin caracteres especiales",
                         },
-                        })}
+                      })}
                       className="uppercase placeholder:text-gray-400 placeholder:capitalize"
                     />
                     {errors.nss && (
@@ -355,9 +491,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                 <div className="grid grid-cols-3 gap-2">
                   {/* rol */}
                   <div className="space-y-2">
-                    <Label htmlFor="rol" className="block text-sm font-medium">
-                      Rol
-                    </Label>
+                    <Label htmlFor="rol" className="block text-sm font-medium">Rol</Label>
                     <Controller
                       name="rol"
                       control={control}
@@ -387,9 +521,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* telefono */}
                   <div className="space-y-2">
-                    <Label htmlFor="telefono" className="block text-sm font-medium">
-                      Telefono
-                    </Label>
+                    <Label htmlFor="telefono" className="block text-sm font-medium">Telefono</Label>
                     <Input
                       id="telefono"
                       type="text"
@@ -421,7 +553,10 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* correo */}
                   <div className="space-y-2">
-                    <Label htmlFor="correo" className="block text-sm font-medium">
+                    <Label
+                      htmlFor="correo"
+                      className="block text-sm font-medium"
+                    >
                       Correo
                     </Label>
                     <Input
@@ -440,7 +575,8 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
                           message: "El correo debe tener máximo 40 caracteres",
                         },
                         pattern: {
-                          value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                           message: "El correo no es válido",
                         },
                       })}
@@ -455,23 +591,22 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* contraseña */}
                   <div className="space-y-2">
-                    <Label htmlFor="contrasena" className="block text-sm font-medium">
-                      Contraseña
-                    </Label>
+                    <Label htmlFor="contrasena" className="block text-sm font-medium">Contraseña</Label>
                     <Input
                       id="contrasena"
                       type="password"
                       placeholder="Contraseña"
                       maxLength={12}
                       {...register("contrasena", {
-                        required: "La contraseña es requerida",
-                        minLength: {
-                          value: 8,
-                          message: "La contraseña debe tener mínimo 8 caracteres",
-                        },
-                        maxLength: {
-                          value: 12,
-                          message: "La contraseña debe tener máximo 12 caracteres",
+                        // No es requerido si viene userToUpdate
+                        required: update?.userToUpdate
+                          ? false
+                          : "La contraseña es requerida",
+                        validate: (value) => {
+                          if (!value) return true; // permitir vacío cuando no es requerido
+                          if (value.length < 8) return "La contraseña debe tener mínimo 8 caracteres";
+                          if (value.length > 12) return "La contraseña debe tener máximo 12 caracteres";
+                          return true;
                         },
                       })}
                       className="uppercase placeholder:text-gray-400 placeholder:capitalize"
@@ -487,18 +622,11 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
             </TabsContent>
 
             <TabsContent value="direccion" className="space-y-2">
-              {/* Dirección */}
               <fieldset className="space-y-2">
-
                 <div className="grid grid-cols-3 gap-2">
                   {/* Municipio */}
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="municipio"
-                      className="block text-sm font-medium"
-                    >
-                      Municipio
-                    </Label>
+                    <Label htmlFor="municipio" className="block text-sm font-medium">Municipio</Label>
                     <Select
                       onValueChange={setMunicipioSeleccionado}
                       value={municipioSeleccionado}
@@ -527,19 +655,16 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* Localidad */}
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="localidad"
-                      className="block text-sm font-medium"
-                    >
-                      Localidad
-                    </Label>
+                    <Label htmlFor="localidad" className="block text-sm font-medium">Localidad</Label>
                     <Controller
                       name="idLocalidad"
                       control={control}
                       rules={{ required: "La localidad es requerida" }}
                       render={({ field }) => (
                         <Select
-                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
                           value={field.value?.toString()}
                         >
                           <SelectTrigger className="w-full">
@@ -573,9 +698,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* numeroCasa */}
                   <div className="space-y-2">
-                    <Label htmlFor="numeroCasa" className="block text-sm font-medium" >
-                      Número de casa
-                    </Label>
+                    <Label htmlFor="numeroCasa" className="block text-sm font-medium">Número de casa</Label>
                     <Input
                       id="numeroCasa"
                       type="number"
@@ -599,9 +722,7 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
 
                   {/* calle */}
                   <div className="space-y-2">
-                    <Label htmlFor="calle" className="block text-sm font-medium">
-                      Calle
-                    </Label>
+                    <Label htmlFor="calle" className="block text-sm font-medium">Calle</Label>
                     <Input
                       id="calle"
                       type="text"
@@ -635,171 +756,184 @@ export const UsuarioForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, })
             </TabsContent>
 
             <TabsContent value="extra" className="space-y-2">
-            {/* Información extra - Condicional según rol */}
-            {rolSeleccionado && rolSeleccionado !== "admin" && (
-              <fieldset className="space-y-2">
-                <div className="grid grid-cols-3 gap-2">
-                  {/* Campos para DOCENTE */}
-                  {rolSeleccionado === "docente" && (
-                    <>
-                      {/* cedulaProfesional */}
-                      <div className="space-y-2">
-                        <Label htmlFor="cedulaProfesional" className="block text-sm font-medium">
-                          Cédula Profesional
-                        </Label>
-                        <Input
-                          id="cedulaProfesional"
-                          type="text"
-                          placeholder="Cédula profesional"
-                          maxLength={13}
-                          {...register("cedulaProfesional", {
-                            required:
-                              rolSeleccionado === "docente"
-                                ? "La cedula profesional es requerida"
-                                : false,
-                            minLength: {
-                              value: 10,
-                              message:
-                                "la cédula profesional debe tener mínimo 10 dígitos",
-                            },
-                            maxLength: {
-                              value: 13,
-                              message:
-                                "la cédula profesional debe tener máximo 13 dígitos",
-                            },
-                            pattern: {
-                              value: /^[0-9]+$/,
-                              message: "Solo se permiten números",
-                            },
-                          })}
-                          className="uppercase placeholder:text-gray-400 placeholder:capitalize"
-                        />
-                        {errors.cedulaProfesional && (
-                          <span className="text-xs block relative -top-1 text-red-400">
-                            {errors.cedulaProfesional.message}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* numeroExpediente */}
-                      <div className="space-y-2">
-                        <Label htmlFor="numeroExpediente" className="block text-sm font-medium">
-                          Número de expediente
-                        </Label>
-                        <Input
-                          id="numeroExpediente"
-                          type="number"
-                          min={1}
-                          placeholder="Número de expediente"
-                          {...register("numeroExpediente", {
-                            required:
-                              rolSeleccionado === "docente"
-                                ? "El número de expediente es requerido"
-                                : false,
-                            min: {
-                              value: 1,
-                              message: "El número de expediente mínimo es 1",
-                            },
-                          })}
-                          className="uppercase placeholder:text-gray-400 placeholder:capitalize"
-                        />
-                        {errors.numeroExpediente && (
-                          <span className="text-xs block relative -top-1 text-red-400">
-                            {errors.numeroExpediente.message}
-                          </span>
-                        )}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Campos para ALUMNO */}
-                  {rolSeleccionado === "alumno" && (
-                    <>
-                      {/* nia */}
-                      <div className="space-y-2">
-                        <Label htmlFor="nia" className="block text-sm font-medium">
-                          NIA
-                        </Label>
-                        <Input
-                          id="nia"
-                          type="text"
-                          placeholder="NIA"
-                          maxLength={8}
-                          {...register("nia", {
-                            required:
-                              rolSeleccionado === "alumno"
-                                ? "La nia es requerida"
-                                : false,
-                            minLength: {
-                              value: 8,
-                              message: "El nia debe tener mínimo 8 dígitos",
-                            },
-                            maxLength: {
-                              value: 8,
-                              message: "El nia debe tener máximo 8 dígitos",
-                            },
-                            pattern: {
-                              value: /^[0-9]+$/,
-                              message: "Solo se permiten números",
-                            },
-                          })}
-                          className="uppercase placeholder:text-gray-400 placeholder:capitalize"
-                        />
-                        {errors.nia && (
-                          <span className="text-xs block relative -top-1 text-red-400">
-                            {errors.nia.message}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* situacion */}
-                      <div className="space-y-2">
-                        <Label htmlFor="situacion" className="block text-sm font-medium">
-                          Situación
-                        </Label>
-                        <Controller
-                          name="situacion"
-                          control={control}
-                          rules={{
-                            required:
-                              rolSeleccionado === "alumno"
-                                ? "La situación es requerida"
-                                : false,
-                          }}
-                          render={({ field }) => (
-                            <Select
-                              onValueChange={(value) => field.onChange(value)}
-                              value={field.value?.toString()}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Situación" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="activo">Activo</SelectItem>
-                                <SelectItem value="baja_temporal">
-                                  Baja temporal
-                                </SelectItem>
-                                <SelectItem value="baja_definitiva">
-                                  Baja definitiva
-                                </SelectItem>
-                                <SelectItem value="egresado">Egresado</SelectItem>
-                              </SelectContent>
-                            </Select>
+              {/* Información extra - Condicional según rol */}
+              {rolSeleccionado && rolSeleccionado !== "admin" && (
+                <fieldset className="space-y-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* Campos para DOCENTE */}
+                    {rolSeleccionado === "docente" && (
+                      <>
+                        {/* cedulaProfesional */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="cedulaProfesional"
+                            className="block text-sm font-medium"
+                          >
+                            Cédula Profesional
+                          </Label>
+                          <Input
+                            id="cedulaProfesional"
+                            type="text"
+                            placeholder="Cédula profesional"
+                            maxLength={13}
+                            {...register("cedulaProfesional", {
+                              required:
+                                rolSeleccionado === "docente"
+                                  ? "La cedula profesional es requerida"
+                                  : false,
+                              minLength: {
+                                value: 10,
+                                message:
+                                  "la cédula profesional debe tener mínimo 10 dígitos",
+                              },
+                              maxLength: {
+                                value: 13,
+                                message:
+                                  "la cédula profesional debe tener máximo 13 dígitos",
+                              },
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: "Solo se permiten números",
+                              },
+                            })}
+                            className="uppercase placeholder:text-gray-400 placeholder:capitalize"
+                          />
+                          {errors.cedulaProfesional && (
+                            <span className="text-xs block relative -top-1 text-red-400">
+                              {errors.cedulaProfesional.message}
+                            </span>
                           )}
-                        />
-                        {errors.situacion && (
-                          <span className="text-xs block relative -top-1 text-red-400">
-                            {errors.situacion.message}
-                          </span>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </fieldset>
-            )}
-            </TabsContent>
+                        </div>
 
+                        {/* numeroExpediente */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="numeroExpediente"
+                            className="block text-sm font-medium"
+                          >
+                            Número de expediente
+                          </Label>
+                          <Input
+                            id="numeroExpediente"
+                            type="number"
+                            min={1}
+                            placeholder="Número de expediente"
+                            {...register("numeroExpediente", {
+                              required:
+                                rolSeleccionado === "docente"
+                                  ? "El número de expediente es requerido"
+                                  : false,
+                              min: {
+                                value: 1,
+                                message: "El número de expediente mínimo es 1",
+                              },
+                            })}
+                            className="uppercase placeholder:text-gray-400 placeholder:capitalize"
+                          />
+                          {errors.numeroExpediente && (
+                            <span className="text-xs block relative -top-1 text-red-400">
+                              {errors.numeroExpediente.message}
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Campos para ALUMNO */}
+                    {rolSeleccionado === "alumno" && (
+                      <>
+                        {/* nia */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="nia"
+                            className="block text-sm font-medium"
+                          >
+                            NIA
+                          </Label>
+                          <Input
+                            id="nia"
+                            type="text"
+                            placeholder="NIA"
+                            maxLength={8}
+                            {...register("nia", {
+                              required:
+                                rolSeleccionado === "alumno"
+                                  ? "La nia es requerida"
+                                  : false,
+                              minLength: {
+                                value: 8,
+                                message: "El nia debe tener mínimo 8 dígitos",
+                              },
+                              maxLength: {
+                                value: 8,
+                                message: "El nia debe tener máximo 8 dígitos",
+                              },
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: "Solo se permiten números",
+                              },
+                            })}
+                            className="uppercase placeholder:text-gray-400 placeholder:capitalize"
+                          />
+                          {errors.nia && (
+                            <span className="text-xs block relative -top-1 text-red-400">
+                              {errors.nia.message}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* situacion */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="situacion"
+                            className="block text-sm font-medium"
+                          >
+                            Situación
+                          </Label>
+                          <Controller
+                            name="situacion"
+                            control={control}
+                            rules={{
+                              required:
+                                rolSeleccionado === "alumno"
+                                  ? "La situación es requerida"
+                                  : false,
+                            }}
+                            render={({ field }) => (
+                              <Select
+                                onValueChange={(value) => field.onChange(value)}
+                                value={field.value?.toString()}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Situación" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="activo">Activo</SelectItem>
+                                  <SelectItem value="baja_temporal">
+                                    Baja temporal
+                                  </SelectItem>
+                                  <SelectItem value="baja_definitiva">
+                                    Baja definitiva
+                                  </SelectItem>
+                                  <SelectItem value="egresado">
+                                    Egresado
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                          {errors.situacion && (
+                            <span className="text-xs block relative -top-1 text-red-400">
+                              {errors.situacion.message}
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </fieldset>
+              )}
+            </TabsContent>
           </Tabs>
         </form>
 

@@ -1,11 +1,12 @@
 // hooks/useUsers.ts
 import { UserActions } from "@/api/users/actions/UserActions";
 import type {
-  ResponseAddUser,
   ResponseUserPaginated,
   ResponseUsersDeleted,
-  Usuario,
+  User,
+  UserSemiComplete,
 } from "@/api/users/interfaces/UserInterface";
+import type { UsuarioFormData } from "@/components/admin/UsuarioFormInterface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -18,11 +19,13 @@ export const useUsers = () => {
     fetchMunicipios,
     fetchLocalidades,
     fetchUsers,
+    fetchCompleteUserData,
     fetchUsersDeleted,
     addUser,
     deleteUser,
     forceDeleteUser,
     restoreUser,
+    updateUser,
   } = UserActions();
 
   /**
@@ -62,6 +65,39 @@ export const useUsers = () => {
       placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
       retry: false,
       refetchOnWindowFocus: true,
+    });
+  };
+
+  /**
+   *
+   * @param rol
+   * @param personId
+   * @returns
+   */
+  const prefetchAllCompleteUserData = (rol: string, personId: number) => {
+    queryClient.prefetchQuery({
+      queryKey: ["user_complete-data", rol, personId],
+      queryFn: () => fetchCompleteUserData(personId, rol),
+      staleTime: 60 * 1000 * 10, // 10 minutos
+    });
+  };
+
+  /**
+   *
+   * @param rol
+   * @param personId
+   * @returns
+   */
+  const fetchAllCompleteUserData = (
+    rol: string,
+    personId: number,
+    enabled: boolean
+  ) => {
+    return useQuery({
+      queryKey: ["user_complete-data", rol, personId],
+      queryFn: () => fetchCompleteUserData(personId, rol),
+      staleTime: 60 * 1000 * 10, // 10 minutos
+      enabled,
     });
   };
 
@@ -117,7 +153,7 @@ export const useUsers = () => {
       });
 
       // Crear usuario optimista con ID temporal
-      const optimisticUser: Usuario = {
+      const optimisticUser: User = {
         id: Math.random(),
         ...userOptimistic,
       };
@@ -205,7 +241,7 @@ export const useUsers = () => {
       if (!context?.optimisticUser) return;
 
       // Extraer el usuario real del wrapper de respuesta
-      const usuarioReal: Usuario = response.data;
+      const usuarioReal: User = response.data;
 
       // Reemplazar el usuario optimista con el real del backend
       queryClient.setQueryData<ResponseUserPaginated>(
@@ -266,7 +302,7 @@ export const useUsers = () => {
     mutationFn: deleteUser,
 
     // Antes de la mutación
-    onMutate: async (userToDelete: Usuario) => {
+    onMutate: async (userToDelete: User) => {
       // Cancela queries en progreso para evitar conflictos
       await queryClient.cancelQueries({ queryKey: ["usuarios"] });
 
@@ -279,7 +315,7 @@ export const useUsers = () => {
       const previousData = queries.map(([key, data]) => ({ key, data }));
 
       // Buscar y eliminar el usuario en todas las páginas
-      let deletedUser: Usuario | null = null;
+      let deletedUser: User | null = null;
       let pageWithUser: number | null = null;
 
       queries.forEach(([key, data]) => {
@@ -429,15 +465,21 @@ export const useUsers = () => {
       await queryClient.cancelQueries({ queryKey: ["usuarios-eliminados"] });
 
       // Guardar snapshots para rollback
-      const previousDeletedUsers = queryClient.getQueryData<ResponseUsersDeleted>(["usuarios-eliminados"]);
+      const previousDeletedUsers =
+        queryClient.getQueryData<ResponseUsersDeleted>(["usuarios-eliminados"]);
 
-      const previousActiveUsers = queryClient.getQueriesData<ResponseUserPaginated>({ queryKey: ["usuarios"], });
+      const previousActiveUsers =
+        queryClient.getQueriesData<ResponseUserPaginated>({
+          queryKey: ["usuarios"],
+        });
 
       // Buscar el usuario en usuarios eliminados
-      let userToRestore: Usuario | null = null;
+      let userToRestore: User | null = null;
 
       if (previousDeletedUsers) {
-        const foundUser = previousDeletedUsers.data.find( (user) => user.id === userId );
+        const foundUser = previousDeletedUsers.data.find(
+          (user) => user.id === userId
+        );
         if (foundUser) {
           userToRestore = foundUser;
         }
@@ -557,7 +599,12 @@ export const useUsers = () => {
         }
       );
 
-      return { previousDeletedUsers, previousActiveUsers, userToRestore, targetPage, };
+      return {
+        previousDeletedUsers,
+        previousActiveUsers,
+        userToRestore,
+        targetPage,
+      };
     },
 
     // Cuando la mutación es exitosa
@@ -568,7 +615,7 @@ export const useUsers = () => {
 
       // Si el backend devuelve el usuario actualizado, reemplazar el optimista
       if (response.data) {
-        const usuarioReal: Usuario = response.data;
+        const usuarioReal: User = response.data;
 
         queryClient.setQueryData<ResponseUserPaginated>(
           ["usuarios", context.targetPage],
@@ -595,7 +642,10 @@ export const useUsers = () => {
 
       // Restaurar usuarios eliminados
       if (context.previousDeletedUsers) {
-        queryClient.setQueryData( ["usuarios-eliminados"], context.previousDeletedUsers );
+        queryClient.setQueryData(
+          ["usuarios-eliminados"],
+          context.previousDeletedUsers
+        );
       }
 
       // Restaurar usuarios activos
@@ -611,9 +661,152 @@ export const useUsers = () => {
     },
   });
 
+  /**
+   * Mapear UserSemiComplete a User (para la tabla paginada)
+   */
+  const mapearUserSemiCompleteAUser = ( userSemiComplete: UserSemiComplete ): User => {
+    return {
+      id: userSemiComplete.id,
+      nombre: userSemiComplete.nombre,
+      apellidoPaterno: userSemiComplete.apellidoPaterno,
+      apellidoMaterno: userSemiComplete.apellidoMaterno,
+      curp: userSemiComplete.curp,
+      sexo: userSemiComplete.sexo,
+      nss: userSemiComplete.nss,
+      rol: userSemiComplete.rol,
+    };
+  };
+
+  /**
+   * Mutación para actualizar usuario con actualización optimista
+   */
+  const actualizarUsuarioOptimistic = useMutation({
+    mutationFn: ({ userId, data, }: { userId: number; data: Partial<UsuarioFormData>; }) => updateUser(userId, data),
+
+    onMutate: async ({ userId, data }) => {
+      // Cancelar queries pendientes
+      await queryClient.cancelQueries({ queryKey: ["usuarios"] });
+
+      // Obtener todas las páginas cacheadas
+      const allQueries = queryClient.getQueriesData<ResponseUserPaginated>({queryKey: ["usuarios"],});
+
+      // Buscar en qué página está el usuario
+      let paginaConUsuario: any = null;
+      let previousData: ResponseUserPaginated | undefined;
+
+      for (const [queryKey, oldData] of allQueries) {
+        // Asegurarse de que hay datos en esta página
+        if (oldData?.data?.data) {
+          const userExists = oldData.data.data.some((user) => user.id === userId);
+
+          if (userExists) {
+            paginaConUsuario = queryKey;
+            previousData = oldData;
+
+            // Actualizar optimistamente SOLO esta página
+            queryClient.setQueryData<ResponseUserPaginated>(queryKey, (old) => {
+              console.log(queryKey)
+              if (!old?.data?.data) return old;
+
+              const updatedUsers = old.data.data.map((user) => {
+                if (user.id === userId) {
+                  return {...user,...(data.nombre && { nombre: data.nombre }),...(data.apellidoPaterno && {  apellidoPaterno: data.apellidoPaterno, }),
+                    ...(data.apellidoMaterno && {
+                      apellidoMaterno: data.apellidoMaterno,
+                    }),
+                    ...(data.curp && { curp: data.curp }),
+                    ...(data.sexo && { sexo: data.sexo }),
+                    ...(data.nss && { nss: data.nss }),
+                    ...(data.rol && { rol: data.rol.toUpperCase() }),
+                  };
+                }
+                return user;
+              });
+
+              return {
+                ...old,
+                data: {
+                  ...old.data,
+                  data: updatedUsers,
+                },
+              };
+            });
+
+            break; // Salir del loop, ya encontramos la página
+          }
+        }
+      }
+
+      return { paginaConUsuario, previousData };
+    },
+
+    onError: (err, variables, context) => {
+      // Revertir cambios solo en la página afectada
+      if (context?.paginaConUsuario && context?.previousData) {
+        queryClient.setQueryData(
+          context.paginaConUsuario,
+          context.previousData
+        );
+      }
+
+      toast.error(
+        err instanceof Error ? err.message : "Error al actualizar usuario"
+      );
+      console.error("Error en actualización:", err);
+    },
+
+    onSuccess: (response, variables, context) => {
+      // Actualizar con los datos reales del servidor solo en la página correcta
+      if (response.data && context?.paginaConUsuario) {
+        const userSemiComplete = response.data;
+        const userSimplificado = mapearUserSemiCompleteAUser(userSemiComplete);
+
+        queryClient.setQueryData<ResponseUserPaginated>(
+          context.paginaConUsuario,
+          (oldData) => {
+            if (!oldData?.data?.data) return oldData;
+
+            const updatedUsers = oldData.data.data.map((user) =>
+              user.id === variables.userId ? userSimplificado : user
+            );
+
+            return {
+              ...oldData,
+              data: {
+                ...oldData.data,
+                data: updatedUsers,
+              },
+            };
+          }
+        );
+
+        // actualizar su cache individual si existe
+        const userCacheKey = ["user_complete-data", userSemiComplete.rol, userSemiComplete.id];
+
+        if (queryClient.getQueryData(userCacheKey)) {
+          queryClient.setQueryData<UserSemiComplete>(
+            userCacheKey,
+            userSemiComplete
+          );
+        }
+      }
+
+      toast.success(response.message || "Usuario actualizado exitosamente");
+    },
+
+    onSettled: (data, error, variables, context) => {
+      // Solo invalidar la página específica donde estaba el usuario
+      if (context?.paginaConUsuario) {
+        queryClient.invalidateQueries({ queryKey: context.paginaConUsuario });
+      }
+    },
+  });
+
   return {
     getUsers,
     prefetchUsersDeleted,
+    prefetchAllCompleteUserData,
+    fetchAllCompleteUserData,
     getUsersDeleted,
     getMunicipios,
     getLocalidades,
@@ -621,5 +814,6 @@ export const useUsers = () => {
     eliminarUsuarioOptimistic,
     eliminarUsuarioPermanenteOptimistic,
     recuperarUsuarioOptimistic,
+    actualizarUsuarioOptimistic,
   };
 };

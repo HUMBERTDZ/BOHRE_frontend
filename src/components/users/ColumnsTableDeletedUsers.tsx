@@ -1,4 +1,4 @@
-import type { Usuario } from "@/api/users/interfaces/UserInterface";
+import type { User } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
@@ -27,7 +27,7 @@ const SortButton = ({ column, text, }: { column: Column<any, any>; text: string;
 };
 
 // Función que crea las columnas (sin hooks)
-export const createColumns = ( onDeleteForce: (usuario: Usuario) => void, onRecover: (usuario: Usuario) => void ): ColumnDef<Usuario>[] => {
+export const ColumnsTableDeletedUsers = ( onDeleteForce: (usuario: User) => void, onRecover: (usuario: User) => void ): ColumnDef<User>[] => {
   return [
     {
       id: "select",

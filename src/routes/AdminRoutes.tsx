@@ -1,5 +1,5 @@
 import { AdminLayout } from "@/layout/AdminLayout";
-import { Usuarios } from "@/pages/admin/Usuarios";
+import { UsersPage } from "@/pages/admin/UsersPage";
 import { Route, Routes } from "react-router";
 
 /**
@@ -14,7 +14,7 @@ export const AdminRoutes = () => {
         <Route path="inicio" element={<h1>inicio</h1>} />
 
         <Route path="usuarios">
-          <Route index element={<Usuarios />} />
+          <Route index element={<UsersPage />} />
           <Route path="alumnos" element={<h1>Hola alumnos usuarios</h1>} />
           <Route path="docentes" element={<h1>Hola docentes usuarios</h1>} />
           <Route path="administradores" element={<h1>Hola administradores usuarios</h1>}

@@ -8,11 +8,12 @@ import type {
   ResponseAddUser,
   ResponseUserPaginated,
   ResponseUsersDeleted,
-  Usuario,
+  ResponseUserSemiComplete,
+  User,
 } from "../interfaces/UserInterface";
 import { UsersAPI } from "../UsersAPI";
 import axios from "axios";
-import { Waiter } from "@/utils/Waiter";
+//import { Waiter } from "@/utils/Waiter";
 import { toast } from "sonner";
 
 export const UserActions = () => {
@@ -65,6 +66,33 @@ export const UserActions = () => {
   };
 
   /**
+   * 
+   * @param personId 
+   * @param rol 
+   * @returns { ResponseUserSemiComplete } Data de la interface usuario semi completo
+   */
+  const fetchCompleteUserData = async ( personId: number, rol: string ): Promise<ResponseUserSemiComplete> => {
+    try {
+      const response = await UsersAPI.get<ResponseUserSemiComplete>("byRol", {
+        params: { rol, idPersona: personId },
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError<GeneralResponse>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+
+      // Error desconocido
+      throw new Error("Ocurrió un error inesperado.");
+    }
+  };
+
+  /**
    * recuperar a los usuarios eliminados
    * @returns  { ResponseUsersDeleted } Data de la interface usuarios eliminados
    */
@@ -105,7 +133,7 @@ export const UserActions = () => {
    * @param user
    * @returns
    */
-  const deleteUser = async (user: Usuario) => {
+  const deleteUser = async (user: User) => {
     try {
       const response = await UsersAPI.delete<GeneralResponse>(`/` + user.id);
 
@@ -178,14 +206,37 @@ export const UserActions = () => {
     }
   };
 
+
+  const updateUser = async ( userId: number, data: Partial<UsuarioFormData> ) => {
+    try {
+      const response = await UsersAPI.patch<ResponseUserSemiComplete>(`/${userId}`, data);
+      toast.success(response.data.message || "Usuario actualizado.");
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError<GeneralResponse>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+
+      // Error desconocido
+      throw new Error("Ocurrió un error inesperado.");
+    }
+  };
+
   return {
     fetchUsers,
+    fetchCompleteUserData,
     fetchUsersDeleted,
     fetchMunicipios,
     fetchLocalidades,
     addUser,
     deleteUser,
     forceDeleteUser,
-    restoreUser
+    restoreUser,
+    updateUser,
   };
 };

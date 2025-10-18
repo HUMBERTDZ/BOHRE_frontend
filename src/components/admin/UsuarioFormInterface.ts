@@ -1,10 +1,4 @@
 export interface UsuarioFormData {
-  numeroCasa: number;
-  calle: string;
-  idLocalidad: number;
-  correo: string;
-  contrasena: string;
-  rol: string;
   nombre: string;
   apellidoPaterno: string;
   apellidoMaterno: string;
@@ -13,6 +7,12 @@ export interface UsuarioFormData {
   sexo: string;
   fechaNacimiento: Date;
   nss: string;
+  correo: string;
+  rol: string;
+  numeroCasa: number;
+  calle: string;
+  idLocalidad: number;
+  contrasena: string;
   cedulaProfesional: string;
   numeroExpediente: number;
   nia: string;

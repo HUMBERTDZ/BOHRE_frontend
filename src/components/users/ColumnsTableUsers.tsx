@@ -1,11 +1,9 @@
-import type { Usuario } from "@/api/users/interfaces/UserInterface";
+import type { User } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Trash, UserPen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "../ui/alert-dialog";
-import type { FC } from "react";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -28,8 +26,10 @@ const SortButton = ({ column, text, }: { column: Column<any, any>; text: string;
   );
 };
 
+interface userToFetch { rol: string; personId: number }
+
 // Función que crea las columnas (sin hooks)
-export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef<Usuario>[] => {
+export const ColumnsTableUsers = ( onDelete: (usuario: User) => void, onFetch: (user: userToFetch) => void ): ColumnDef<User>[] => {
   return [
     {
       id: "select",
@@ -119,7 +119,7 @@ export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => console.log(original)} className="focus:bg-green-100 focus:text-green-500 text-green-500">
+              <DropdownMenuItem onClick={() => onFetch({rol: original.rol, personId: original.id})} className="focus:bg-green-100 focus:text-green-500 text-green-500">
                 <UserPen className="text-current" />
                 Actualizar
               </DropdownMenuItem>
@@ -127,7 +127,7 @@ export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef
                 <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => console.log(`fetch a ${original.nombre}`)} >
+              <DropdownMenuItem onMouseEnter={() => console.log(original)} >
                 <Eye />
                 Ver detalles
               </DropdownMenuItem>
@@ -137,34 +137,4 @@ export const createColumns = ( onDelete: (usuario: Usuario) => void ): ColumnDef
       },
     },
   ];
-};
-
-// Componente del AlertDialog de eliminación
-interface AlertDialogEliminarProps {
-  usuario: Usuario | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
-}
-
-export const AlertDialogEliminar:FC<AlertDialogEliminarProps> = ({ usuario, open, onOpenChange, onConfirm, }) => {
-  return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Eliminar usuario</AlertDialogTitle>
-          <AlertDialogDescription>
-            Esto eliminará el usuario {usuario?.nombre}{" "}
-            {usuario?.apellidoPaterno} {usuario?.apellidoMaterno}. ¿Estás seguro?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} >
-            Continuar
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
 };

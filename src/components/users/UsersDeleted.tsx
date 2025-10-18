@@ -3,8 +3,8 @@ import {  AlertDialog,  AlertDialogCancel,  AlertDialogContent,  AlertDialogDesc
 import { useUsers } from "@/hooks/users/useUsers";
 import { Loading } from "../ui/Loading";
 import { DataTable } from "./DataTable";
-import { createColumns } from "./ColumnsTableDeletedUsers";
-import type { Usuario } from "@/api/users/interfaces/UserInterface";
+import { ColumnsTableDeletedUsers } from "./ColumnsTableDeletedUsers";
+import type { User } from "@/api/users/interfaces/UserInterface";
 import { AlertDialogActions } from "./AlertDialogActions";
 
 // Componente del AlertDialog de eliminación
@@ -21,22 +21,22 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
   const { data: deletedUsers, isFetching } = getUsersDeleted();
 
 
-  const [userDelete, setUserDelete] = useState<Usuario | null>(null);
+  const [userDelete, setUserDelete] = useState<User | null>(null);
 
   // estado para setear el usuario a recuperar
-  const [usuarioARecuperar, setUsuarioARecuperar] = useState<Usuario | null>(null);
+  const [usuarioARecuperar, setUsuarioARecuperar] = useState<User | null>(null);
 
   // Crear columnas con el callback de eliminación
-  const columns = createColumns(setUserDelete, setUsuarioARecuperar);
+  const columns = ColumnsTableDeletedUsers(setUserDelete, setUsuarioARecuperar);
 
-  const handleEliminarPermanente = () => {
+  const handleDeleteUserPermanently = () => {
     if (userDelete) {
       eliminarUsuarioPermanenteOptimistic.mutate(Number(userDelete.id));
       setUserDelete(null);
     }
   };
 
-  const handleRecuperar = () => {
+  const processUserRecovery = () => {
     if (usuarioARecuperar) {
       recuperarUsuarioOptimistic.mutate(Number(usuarioARecuperar.id));
       setUsuarioARecuperar(null);
@@ -69,7 +69,7 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
         description={`Esto eliminará el usuario ${userDelete?.nombre} ${userDelete?.apellidoPaterno} ${userDelete?.apellidoMaterno} permanentemente. ¿Estás seguro?`}
         open={userDelete !== null}
         onOpenChange={(open) => !open && setUserDelete(null)}
-        onConfirm={handleEliminarPermanente}
+        onConfirm={handleDeleteUserPermanently}
       />
 
       <AlertDialogActions
@@ -77,7 +77,7 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
         description={`Esto recuperará el usuario ${usuarioARecuperar?.nombre} ${usuarioARecuperar?.apellidoPaterno} ${usuarioARecuperar?.apellidoMaterno}. ¿Estás seguro?`}
         open={usuarioARecuperar !== null}
         onOpenChange={(open) => !open && setUsuarioARecuperar(null)}
-        onConfirm={handleRecuperar}
+        onConfirm={processUserRecovery}
       />
     </>
   );

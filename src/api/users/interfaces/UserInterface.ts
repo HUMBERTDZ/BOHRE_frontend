@@ -1,5 +1,5 @@
 // interfaces/User.ts
-export interface Usuario {
+export interface User {
   id: number;
   nombre: string;
   apellidoPaterno: string;
@@ -34,21 +34,51 @@ export interface PaginatedData<T> {
 
 export interface ResponseUserPaginated {
   message: string;
-  data: PaginatedData<Usuario>;
+  data: PaginatedData<User>;
 }
 
 export interface ResponseUsersDeleted {
   message: string;
-  data: Usuario[];
+  data: User[];
 }
 
 // cuando se agrega un usuario esta es la respuesta http
 export interface ResponseAddUser {
   message: string;
-  data: Usuario;
+  data: User;
 }
 
 export interface GeneralResponse {
   message: string;
   data: null;
+}
+
+export interface ResponseUserSemiComplete {
+  message: string;
+  data:    UserSemiComplete;
+}
+
+export interface UserSemiComplete {
+  id:                number;
+  nombre:            string;
+  apellidoPaterno:   string;
+  apellidoMaterno:   string;
+  curp:              string;
+  telefono:          string;
+  sexo:              string;
+  fechaNacimiento:   Date;
+  nss:               string;
+  correo:            string;
+  rol:               string;
+  idMunicipio:       number;
+  municipio:         string;
+  idLocalidad:       number;
+  localidad:         string;
+  codigoPostal:      number;
+  numeroCasa:        number;
+  calle:             string;
+  cedulaProfesional?: string | null;
+  numeroExpediente?:  number | null;
+  nia?:  string | null;
+  situacion?:  string | null;
 }
