@@ -9,10 +9,13 @@ import { Loading } from "@/components/ui/Loading";
 import { UsersDeleted } from "@/components/users/UsersDeleted";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { Undo, UserPlusIcon } from "lucide-react";
+import { useUsersMutations } from "@/hooks/users/useUsersMutations";
 
 export const UsersPage = () => {
   // funciones de usuarios con el custom hook
-  const { getUsers, prefetchUsersDeleted, fetchAllCompleteUserData, eliminarUsuarioOptimistic } = useUsers();
+  const { getUsers, getSemicompleteUserData } = useUsers();
+
+  const { eliminarUsuarioOptimistic } = useUsersMutations();
 
   // estado para el dialogo de agregar usuario manualmente
   const [stateDialogOpen, setStateDialogOpen] = useState<boolean>(false);
@@ -30,7 +33,7 @@ export const UsersPage = () => {
   const [userToUpdate, setUserToUpdate] = useState<UserSemiComplete | null>(null);
 
   // Query que solo se ejecuta cuando userToFetch tiene valor
-  const { data: completeUserData } = fetchAllCompleteUserData(userToFetch?.rol ?? "", userToFetch?.personId ?? 0, !!userToFetch);
+  const { data: completeUserData } = getSemicompleteUserData(userToFetch?.rol ?? "", userToFetch?.personId ?? 0, !!userToFetch);
 
   // estado para paginación de usuarios
   const [page, setPage] = useState<number>(1);
@@ -113,7 +116,7 @@ export const UsersPage = () => {
             }}
         >
           <>
-            <Button onMouseEnter={prefetchUsersDeleted}  onClick={() => setStateDialogUsersDeleted(true)} variant={"outline"}>
+            <Button onClick={() => setStateDialogUsersDeleted(true)} variant={"outline"}>
               <Undo />
               Recuperar eliminados
             </Button>

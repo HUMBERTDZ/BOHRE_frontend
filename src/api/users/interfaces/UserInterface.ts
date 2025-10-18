@@ -37,10 +37,6 @@ export interface ResponseUserPaginated {
   data: PaginatedData<User>;
 }
 
-export interface ResponseUsersDeleted {
-  message: string;
-  data: User[];
-}
 
 // cuando se agrega un usuario esta es la respuesta http
 export interface ResponseAddUser {
@@ -48,10 +44,6 @@ export interface ResponseAddUser {
   data: User;
 }
 
-export interface GeneralResponse {
-  message: string;
-  data: null;
-}
 
 export interface ResponseUserSemiComplete {
   message: string;
@@ -81,4 +73,12 @@ export interface UserSemiComplete {
   numeroExpediente?:  number | null;
   nia?:  string | null;
   situacion?:  string | null;
+  idGrupoSemestre: number | null;
+  numeroSemestre: number | null;
+  periodoSemestre: string | null;
+  idGeneracion: number | null;
+  fechaIngresoGeneracion: string | null;
+  fechaEgresoGeneracion: string | null;
+  idEspecialidad: number | null;
+  especialidadNombre: string | null;
 }

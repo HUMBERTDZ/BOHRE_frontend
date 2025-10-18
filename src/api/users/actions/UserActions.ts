@@ -4,10 +4,8 @@ import { BaseAPI } from "../../BaseAPI";
 import type { TopLevelLocalidades } from "../interfaces/Localidades";
 import type { TopLevelMunicipios } from "../interfaces/Municipios";
 import type {
-  GeneralResponse,
   ResponseAddUser,
   ResponseUserPaginated,
-  ResponseUsersDeleted,
   ResponseUserSemiComplete,
   User,
 } from "../interfaces/UserInterface";
@@ -15,13 +13,16 @@ import { UsersAPI } from "../UsersAPI";
 import axios from "axios";
 //import { Waiter } from "@/utils/Waiter";
 import { toast } from "sonner";
+import type { ResponseError } from "@/api/GeneralInterface";
 
 export const UserActions = () => {
+  // obtiene los municipios
   const fetchMunicipios = async (): Promise<TopLevelMunicipios> => {
     const response = await BaseAPI.get(`/municipios`);
     return response.data;
   };
 
+  // obtiene las localidades por municipio
   const fetchLocalidades = async (
     municipioId: number
   ): Promise<TopLevelLocalidades> => {
@@ -48,7 +49,7 @@ export const UserActions = () => {
       return response.data;
     } catch (error) {
       // Tipar el error correctamente
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -66,19 +67,22 @@ export const UserActions = () => {
   };
 
   /**
-   * 
-   * @param personId 
-   * @param rol 
+   *
+   * @param personId
+   * @param rol
    * @returns { ResponseUserSemiComplete } Data de la interface usuario semi completo
    */
-  const fetchCompleteUserData = async ( personId: number, rol: string ): Promise<ResponseUserSemiComplete> => {
+  const fetchCompleteUserData = async (
+    personId: number,
+    rol: string
+  ): Promise<ResponseUserSemiComplete> => {
     try {
       const response = await UsersAPI.get<ResponseUserSemiComplete>("byRol", {
         params: { rol, idPersona: personId },
       });
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -94,14 +98,18 @@ export const UserActions = () => {
 
   /**
    * recuperar a los usuarios eliminados
-   * @returns  { ResponseUsersDeleted } Data de la interface usuarios eliminados
+   * @returns  { ResponseUserPaginated } Data de la interface usuarios eliminados
    */
-  const fetchUsersDeleted = async (): Promise<ResponseUsersDeleted> => {
+  const fetchUsersDeleted = async (
+    page: number
+  ): Promise<ResponseUserPaginated> => {
     try {
-      const response = await UsersAPI.get<ResponseUsersDeleted>("/deleted");
+      const response = await UsersAPI.get<ResponseUserPaginated>("/deleted", {
+        params: { page },
+      });
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.info(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -121,27 +129,27 @@ export const UserActions = () => {
   /**
    * Agrega un nuevo usuario
    * @param data de usuario a agregar
-   * @returns
+   * @returns { ResponseAddUser } data del usuario agregado
    */
-  const addUser = async (data: UsuarioFormData) => {
+  const addUser = async (data: UsuarioFormData): Promise<ResponseAddUser> => {
     const response = await UsersAPI.post<ResponseAddUser>("/", data);
     return response.data;
   };
 
   /**
    * Elimina un usuario por su ID person
-   * @param user
-   * @returns
+   * @param user usuario a eliminar
+   * @returns { null }
    */
-  const deleteUser = async (user: User) => {
+  const deleteUser = async (user: User): Promise<ResponseError> => {
     try {
-      const response = await UsersAPI.delete<GeneralResponse>(`/` + user.id);
+      const response = await UsersAPI.delete<ResponseError>(`/` + user.id);
 
       toast.success(response.data.message || "Usuario eliminado.");
 
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -158,17 +166,17 @@ export const UserActions = () => {
   /**
    * Elimina un usuario de forma permanente por su ID person
    * @param userId id del usuario a eliminar permanentemente
-   * @returns
+   * @returns { ResponseError }
    */
-  const forceDeleteUser = async (userId: number) => {
+  const forceDeleteUser = async (userId: number): Promise<ResponseError> => {
     try {
-      const response = await UsersAPI.delete<GeneralResponse>(
+      const response = await UsersAPI.delete<ResponseError>(
         `/delete/` + userId
       );
       toast.success(response.data.message || "Usuario eliminado.");
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -184,15 +192,17 @@ export const UserActions = () => {
   /**
    * Restaura un usuario eliminado
    * @param userId ID del usuario a restaurar
-   * @returns
+   * @returns { ResponseAddUser } data del usuario restaurado
    */
-  const restoreUser = async (userId: number) => {
+  const restoreUser = async (userId: number): Promise<ResponseAddUser> => {
     try {
-      const response = await UsersAPI.patch<ResponseAddUser>(`/restore/` + userId);
+      const response = await UsersAPI.patch<ResponseAddUser>(
+        `/restore/` + userId
+      );
       toast.success(response.data.message || "Usuario restaurado.");
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {
@@ -206,14 +216,25 @@ export const UserActions = () => {
     }
   };
 
-
-  const updateUser = async ( userId: number, data: Partial<UsuarioFormData> ) => {
+  /**
+   * actualiza un usuario por su ID person
+   * @param userId  id del usuario a actualizar
+   * @param data datos parciales del usuario a actualizar
+   * @returns { UserSemiComplete } data del usuario actualizado
+   */
+  const updateUser = async (
+    userId: number,
+    data: Partial<UsuarioFormData>
+  ): Promise<ResponseUserSemiComplete> => {
     try {
-      const response = await UsersAPI.patch<ResponseUserSemiComplete>(`/${userId}`, data);
+      const response = await UsersAPI.patch<ResponseUserSemiComplete>(
+        `/${userId}`,
+        data
+      );
       toast.success(response.data.message || "Usuario actualizado.");
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError<GeneralResponse>(error)) {
+      if (axios.isAxiosError<ResponseError>(error)) {
         if (error.response) {
           toast.error(error.response.data.message || "Error del servidor.");
         } else if (error.request) {

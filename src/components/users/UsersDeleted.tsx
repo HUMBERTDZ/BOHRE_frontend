@@ -6,6 +6,7 @@ import { DataTable } from "./DataTable";
 import { ColumnsTableDeletedUsers } from "./ColumnsTableDeletedUsers";
 import type { User } from "@/api/users/interfaces/UserInterface";
 import { AlertDialogActions } from "./AlertDialogActions";
+import { useUsersMutations } from "@/hooks/users/useUsersMutations";
 
 // Componente del AlertDialog de eliminación
 interface AlertDialogEliminarProps {
@@ -15,10 +16,15 @@ interface AlertDialogEliminarProps {
 
 export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange }) => {
   // del custom hook de usuarios extraer la función para obtener usuarios eliminados
-  const { getUsersDeleted, eliminarUsuarioPermanenteOptimistic, recuperarUsuarioOptimistic } = useUsers();
+  const { getUsersDeleted } = useUsers();
+
+  const { eliminarUsuarioPermanenteOptimistic, recuperarUsuarioOptimistic } = useUsersMutations();
+
+  // estado para paginación de usuarios
+  const [page, setPage] = useState<number>(1);
 
   // obtener los datos de la peticion http de usuarios eliminados
-  const { data: deletedUsers, isFetching } = getUsersDeleted();
+  const { data: deletedUsers, isFetching } = getUsersDeleted(page);
 
 
   const [userDelete, setUserDelete] = useState<User | null>(null);
@@ -55,7 +61,16 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
             <AlertDialogTitle>Usuarios eliminados</AlertDialogTitle>
             <AlertDialogDescription>
               Estos usuarios han sido eliminados. ¿Deseas recuperarlos?
-              <DataTable columns={columns} data={deletedUsers?.data || []} />
+              <DataTable 
+                columns={columns} 
+                data={deletedUsers?.data.data || []}
+                pagination={{
+                  currentPage: deletedUsers?.data.current_page || 1,
+                  lastPage: deletedUsers?.data.last_page || 1,
+                  total: deletedUsers?.data.total || 0,
+                  onPageChange: setPage,
+                }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

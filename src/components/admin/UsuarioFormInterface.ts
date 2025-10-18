@@ -17,4 +17,7 @@ export interface UsuarioFormData {
   numeroExpediente: number;
   nia: string;
   situacion: string;
+  idGrupoSemestre: number;
+  idGeneracion: number;
+  idEspecialidad: number;
 }
