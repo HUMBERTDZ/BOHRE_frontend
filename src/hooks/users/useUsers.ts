@@ -91,7 +91,7 @@ export const useUsers = () => {
    * @param personId id de la persona
    * @returns { ResponseUserSemiComplete }
    */
-  const getSemicompleteUserData = ( rol: string, personId: number, enabled: boolean ): UseQueryResult<ResponseUserSemiComplete, Error> => {
+  const getSemicompleteUserData = ( rol: string, personId: number, enabled: boolean = false ): UseQueryResult<ResponseUserSemiComplete, Error> => {
     return useQuery({
       queryKey: ["user_complete-data", rol, personId],
       queryFn: () => fetchCompleteUserData(personId, rol),
@@ -413,6 +413,7 @@ export const useUsers = () => {
     },
 
     onSuccess: (response, variables, context) => {
+      console.log(response)
       // Actualizar con los datos reales del servidor solo en la página correcta
       if (response.data && context?.paginaConUsuario) {
         const userSemiComplete = response.data;
@@ -437,18 +438,44 @@ export const useUsers = () => {
           }
         );
 
-        // actualizar su cache individual si existe
+        // Actualizar cache individual si existe
+        const rolLowerCase = userSemiComplete.rol.toLowerCase();
         const userCacheKey = [
           "user_complete-data",
-          userSemiComplete.rol,
+          rolLowerCase,
           userSemiComplete.id,
         ];
 
-        if (queryClient.getQueryData(userCacheKey)) {
-          queryClient.setQueryData<UserSemiComplete>(
-            userCacheKey,
-            userSemiComplete
-          );
+        // Buscar en todos los roles posibles (por si cambió de rol)
+        const rolesAlternos = ['alumno', 'profesor', 'admin', 'superadmin'];
+        let cacheActualizado = false;
+
+        for (const rol of rolesAlternos) {
+          const alternateKey = ["user_complete-data", rol, userSemiComplete.id];
+          const existingCache = queryClient.getQueryData(alternateKey);
+          
+          if (existingCache) {
+            queryClient.setQueryData<ResponseUserSemiComplete>(
+              alternateKey,
+              response
+            );
+            cacheActualizado = true;
+            console.log(`✅ Cache individual actualizado para rol: ${rol}`);
+            
+            // Si el rol cambió, también actualizar con el nuevo rol
+            if (rol !== rolLowerCase) {
+              queryClient.setQueryData<ResponseUserSemiComplete>(
+                userCacheKey,
+                response
+              );
+              console.log(`✅ Cache creado para nuevo rol: ${rolLowerCase}`);
+            }
+            break;
+          }
+        }
+
+        if (!cacheActualizado) {
+          console.log('ℹ️ No se encontró cache individual para actualizar');
         }
       }
 
@@ -456,10 +483,7 @@ export const useUsers = () => {
     },
 
     onSettled: (data, error, variables, context) => {
-      // Solo invalidar la página específica donde estaba el usuario
-      if (context?.paginaConUsuario) {
-        queryClient.invalidateQueries({ queryKey: context.paginaConUsuario });
-      }
+    
     },
   });
 

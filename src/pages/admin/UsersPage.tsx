@@ -10,10 +10,12 @@ import { UsersDeleted } from "@/components/users/UsersDeleted";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { Undo, UserPlusIcon } from "lucide-react";
 import { useUsersMutations } from "@/hooks/users/useUsersMutations";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Link } from "react-router";
 
 export const UsersPage = () => {
   // funciones de usuarios con el custom hook
-  const { getUsers, getSemicompleteUserData } = useUsers();
+  const { getUsers, getSemicompleteUserData, prefetchAllCompleteUserData } = useUsers();
 
   const { eliminarUsuarioOptimistic } = useUsersMutations();
 
@@ -65,7 +67,7 @@ export const UsersPage = () => {
   };
 
   // Crear columnas con el callback de eliminación
-  const columns = ColumnsTableUsers(setUsuarioAEliminar, setUserToFetch);
+  const columns = ColumnsTableUsers({ onDelete: setUsuarioAEliminar, onFetch: setUserToFetch, onUserPrefetch: prefetchAllCompleteUserData});
 
   /**
    * eliminar usuario
@@ -88,6 +90,21 @@ export const UsersPage = () => {
   return (
     <>
       <header>
+        <Breadcrumb>
+          <BreadcrumbList>
+            {/* usuarios */}
+            <BreadcrumbItem>
+              <BreadcrumbLink >
+                <Link to="/">Inicio</Link>
+              </BreadcrumbLink>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
+            {/* usuarios */}
+            <BreadcrumbItem>
+              <BreadcrumbLink>Usuarios</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <h1 className="font-bold text-center text-lg lg:text-2xl">Usuarios</h1>
         <p className="text-gray-500">
           En este módulo puedes administrar a todos los usuarios del sistema.

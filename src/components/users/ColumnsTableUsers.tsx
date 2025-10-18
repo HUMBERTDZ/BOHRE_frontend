@@ -4,6 +4,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Trash, UserPen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
+import { Link } from "react-router";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -26,10 +27,16 @@ const SortButton = ({ column, text, }: { column: Column<any, any>; text: string;
   );
 };
 
-interface userToFetch { rol: string; personId: number }
+
+interface userToFetch { rol: string; personId: number };
+interface props {
+  onDelete: (usuario: User) => void;
+  onFetch: (user: userToFetch) => void;
+  onUserPrefetch: (rol: string, personId: number) => void;
+}
 
 // Función que crea las columnas (sin hooks)
-export const ColumnsTableUsers = ( onDelete: (usuario: User) => void, onFetch: (user: userToFetch) => void ): ColumnDef<User>[] => {
+export const ColumnsTableUsers = ( { onDelete, onFetch, onUserPrefetch }: props): ColumnDef<User>[] => {
   return [
     {
       id: "select",
@@ -119,7 +126,7 @@ export const ColumnsTableUsers = ( onDelete: (usuario: User) => void, onFetch: (
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onFetch({rol: original.rol, personId: original.id})} className="focus:bg-green-100 focus:text-green-500 text-green-500">
+              <DropdownMenuItem onClick={() => onFetch({rol: original.rol.toLowerCase(), personId: original.id})} className="focus:bg-green-100 focus:text-green-500 text-green-500">
                 <UserPen className="text-current" />
                 Actualizar
               </DropdownMenuItem>
@@ -127,9 +134,11 @@ export const ColumnsTableUsers = ( onDelete: (usuario: User) => void, onFetch: (
                 <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => console.log(original)} >
-                <Eye />
-                Ver detalles
+              <DropdownMenuItem onMouseEnter={() => onUserPrefetch(original.rol.toLowerCase(), original.id)} asChild>
+                <Link to={`${original.rol.toLowerCase()}/${original.id}`}>
+                  <Eye />
+                  Ver detalles
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

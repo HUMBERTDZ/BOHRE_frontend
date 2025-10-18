@@ -7,9 +7,9 @@ const admin = [
     icon: Users,
     submenus: [
       { title: "Todos", url: "usuarios" },
-      { title: "Alumnos", url: "usuarios/alumnos" },
+    /*   { title: "Alumnos", url: "usuarios/alumnos" },
       { title: "Docentes", url: "usuarios/docentes" },
-      { title: "Administradores", url: "usuarios/administradores" },
+      { title: "Administradores", url: "usuarios/administradores" }, */
     ],
   },
   {
@@ -18,8 +18,8 @@ const admin = [
     icon: LibraryBig,
     submenus: [
       { title: "Todas", url: "asignaturas" },
-      { title: "Tronco común", url: "asignaturas/comun" },
-      { title: "Especialidad", url: "asignaturas/especialidad" },
+      /* { title: "Tronco común", url: "asignaturas/comun" },
+      { title: "Especialidad", url: "asignaturas/especialidad" }, */
     ],
   },
   {
