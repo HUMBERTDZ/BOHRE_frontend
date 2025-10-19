@@ -60,12 +60,6 @@ export const UsersPage = () => {
       setUserToUpdate(null);
   };
 
-  // Función para limpiar después de actualizar con éxito
-  const handleSuccessUpdate = () => {
-    setUserToFetch(null);
-    setUserToUpdate(null);
-  };
-
   // Crear columnas con el callback de eliminación
   const columns = ColumnsTableUsers({ onDelete: setUsuarioAEliminar, onFetch: setUserToFetch, onUserPrefetch: prefetchAllCompleteUserData});
 
@@ -94,14 +88,12 @@ export const UsersPage = () => {
           <BreadcrumbList>
             {/* usuarios */}
             <BreadcrumbItem>
-              <BreadcrumbLink >
                 <Link to="/">Inicio</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator />
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
             {/* usuarios */}
             <BreadcrumbItem>
-              <BreadcrumbLink>Usuarios</BreadcrumbLink>
+              Usuarios
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -118,8 +110,8 @@ export const UsersPage = () => {
           setStateDialogOpen={setStateDialogOpen}
           update={{
             userToUpdate,
-            handleCloseDialog,
-            handleSuccessUpdate,
+            handleCloseDialog: handleCloseDialog,
+            handleSuccessUpdate: handleCloseDialog,
           }}
         />
 

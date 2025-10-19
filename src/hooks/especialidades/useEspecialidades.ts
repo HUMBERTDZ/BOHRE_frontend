@@ -2,15 +2,15 @@ import { EspecialidadesActions } from "@/api/especialidades/actions/Especialidad
 import { useQuery } from "@tanstack/react-query";
 
 export const useEspecialidades = () => {
-  const { getAllEspecialidades } = EspecialidadesActions();
+  const { fetchEspecialidades } = EspecialidadesActions();
 
-  const fetchAllEspecialidades = () => {
+  const getEspecialidades = () => {
     return useQuery({
       queryKey: ["especialidades"],
-      queryFn: getAllEspecialidades,
+      queryFn: fetchEspecialidades,
       staleTime: 1000 * 60 * 30, // 30 minutos
     });
   };
 
-  return { fetchAllEspecialidades };
+  return { getEspecialidades };
 };

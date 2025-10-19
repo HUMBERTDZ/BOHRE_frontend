@@ -30,7 +30,7 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
   // obteniendo funciones desde el custom hooks
   const { getMunicipios, getLocalidades, } = useUsers();
   const { fetchCurrentGenerations, fetchAllGrupoSemestres } = usePeriods();
-  const { fetchAllEspecialidades } = useEspecialidades();
+  const { getEspecialidades } = useEspecialidades();
 
   // desestructurando props desde el hook de municipios
   const { data: municipiosData, isFetching: municipiosIsFetching } =
@@ -49,7 +49,7 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
   const { data: localidadesData, isFetching: isFetchingLocalidades } = getLocalidades(municipioSeleccionado ? parseInt(municipioSeleccionado) : 0);
   const { data: generationsData, isFetching: isFetchingGenerations } = fetchCurrentGenerations(true);
   const { data: grupoSemestresData, isFetching: isFetchingGrupoSemestres } = fetchAllGrupoSemestres();
-  const { data: especialidadesData, isFetching: isFetchingEspecialidades } = fetchAllEspecialidades();  
+  const { data: especialidadesData, isFetching: isFetchingEspecialidades } = getEspecialidades();  
 
   /**
    * Función para manejar la cancelación del formulario

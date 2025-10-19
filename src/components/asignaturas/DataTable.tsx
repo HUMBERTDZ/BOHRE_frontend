@@ -97,7 +97,7 @@ export function DataTable<TData, TValue>({
 
       {/* Tabla */}
       <div className="rounded-md border">
-        <Table className="text-center">
+        <Table  className="text-center">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -121,7 +121,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={`row-${row.id}`}>
                   {row.getVisibleCells().map((cell) =>  (
-                    <TableCell key={`cell-${cell.id}`} >
+                    <TableCell key={`cell-${cell.id}`}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

@@ -1,15 +1,13 @@
 import { BaseAPI } from "@/api/BaseAPI";
-import type { ResponseEspecialidades } from "../interfaces/EspecialidadesInterfaces";
+import type { ResponseError } from "@/api/GeneralInterface";
 import axios from "axios";
 import { toast } from "sonner";
-import type { ResponseError } from "@/api/GeneralInterface";
+import type { ResponseSemestres } from "../interfaces/SemestresInterfaces";
 
-export const EspecialidadesActions = () => {
-  const fetchEspecialidades = async () => {
+export const SemestresActions = () => {
+  const fetchSemestres = async (): Promise<ResponseSemestres> => {
     try {
-      const response = await BaseAPI.get<ResponseEspecialidades>(
-        "/especialidades"
-      );
+      const response = await BaseAPI.get("/semestres");
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -21,11 +19,10 @@ export const EspecialidadesActions = () => {
         }
       }
 
+      // Error desconocido
       throw new Error("Ocurrió un error inesperado.");
     }
   };
 
-  return {
-    fetchEspecialidades,
-  };
+  return { fetchSemestres };
 };
