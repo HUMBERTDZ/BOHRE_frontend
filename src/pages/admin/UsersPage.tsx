@@ -10,7 +10,7 @@ import { UsersDeleted } from "@/components/users/UsersDeleted";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { Undo, UserPlusIcon } from "lucide-react";
 import { useUsersMutations } from "@/hooks/users/useUsersMutations";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Link } from "react-router";
 
 export const UsersPage = () => {
@@ -88,12 +88,12 @@ export const UsersPage = () => {
           <BreadcrumbList>
             {/* usuarios */}
             <BreadcrumbItem>
-                <Link to="/">Inicio</Link>
+                <Link to="/inicio">Inicio</Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             {/* usuarios */}
             <BreadcrumbItem>
-              Usuarios
+              <Link to="/usuarios">Usuarios</Link>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

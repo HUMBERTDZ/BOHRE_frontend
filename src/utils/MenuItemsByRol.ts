@@ -26,9 +26,7 @@ const admin = [
     title: "Grupos y Semestres",
     icon: AArrowUp,
     submenus: [
-      { title: "Grupos y semestres", url: "grupos_semestres" },
-      { title: "Grupos", url: "grupos_semestres/grupos" },
-      { title: "Semestres", url: "grupos_semestres/semestres" },
+      { title: "Todos", url: "grupos_semestres" },
     ],
   },
   {

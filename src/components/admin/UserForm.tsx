@@ -816,7 +816,15 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
                             render={({ field }) => (
                               <Select onValueChange={(value) => field.onChange(parseInt(value))}
                                 value={field.value?.toString()}
-                                disabled={ isFetchingEspecialidades || update?.userToUpdate?.idEspecialidad !== undefined }>
+                                disabled={ 
+                                  isFetchingEspecialidades 
+                                  || 
+                                  (
+                                    update?.userToUpdate?.idEspecialidad !== undefined
+                                    && 
+                                    update?.userToUpdate?.idEspecialidad !== null
+                                  )
+                                }>
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder="Especialidad" />
                                 </SelectTrigger>

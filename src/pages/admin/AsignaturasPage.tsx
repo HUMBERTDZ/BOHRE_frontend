@@ -68,7 +68,7 @@ export const AsignaturasPage = () => {
           <BreadcrumbList>
             {/* inicio */}
             <BreadcrumbItem>
-                <Link to="/">Inicio</Link>
+                <Link to="/inicio">Inicio</Link>
             </BreadcrumbItem>
               <BreadcrumbSeparator />
             {/* asignaturas */}

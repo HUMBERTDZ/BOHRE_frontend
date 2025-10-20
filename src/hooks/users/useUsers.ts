@@ -267,6 +267,10 @@ export const useUsers = () => {
           };
         }
       );
+
+      queryClient.invalidateQueries({ queryKey: ["gruposSemestres"] });
+      queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
+
     },
 
     // Si hay error, elimina el usuario optimista
@@ -478,6 +482,9 @@ export const useUsers = () => {
           console.log('ℹ️ No se encontró cache individual para actualizar');
         }
       }
+
+      queryClient.invalidateQueries({ queryKey: ["gruposSemestres"] });
+      queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
 
       toast.success(response.message || "Usuario actualizado exitosamente");
     },

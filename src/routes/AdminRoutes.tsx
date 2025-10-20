@@ -1,5 +1,7 @@
 import { AdminLayout } from "@/layout/AdminLayout";
 import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
+import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestresDetailsPage";
+import { GruposSemestresPage } from "@/pages/admin/GruposSemestresPage";
 import { UserDetailsPage } from "@/pages/admin/UserDetailsPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { Route, Routes } from "react-router";
@@ -10,6 +12,7 @@ import { Route, Routes } from "react-router";
  */
 
 export const AdminRoutes = () => {
+
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
@@ -27,14 +30,15 @@ export const AdminRoutes = () => {
 
         <Route path="asignaturas">
           <Route index element={<AsignaturasPage />} />
-          <Route path="comun" element={<h1>comun</h1>} />
-          <Route path="especialidad" element={<h1>especialidad</h1>} />
+          {/* <Route path="comun" element={<h1>comun</h1>} />
+          <Route path="especialidad" element={<h1>especialidad</h1>} /> */}
         </Route>
 
         <Route path="grupos_semestres">
-          <Route index element={<h1>Hola prupos y semestres</h1>} />
-          <Route path="grupos" element={<h1>grupos</h1>} />
-          <Route path="semestres" element={<h1>semestres</h1>} />
+          <Route index element={< GruposSemestresPage />} />
+          {/* <Route path="grupos" element={<h1>grupos</h1>} />
+          <Route path="semestres" element={<h1>semestres</h1>} /> */}
+          <Route path="detalles/:idGrupoSemestre" element={<GruposSemestresDetailsPage />} />
         </Route>
 
         <Route path="ciclos" element={<h1>ciclos</h1>} />

@@ -19,5 +19,5 @@ export interface UsuarioFormData {
   situacion: string;
   idGrupoSemestre: number;
   idGeneracion: number;
-  idEspecialidad: number;
+  idEspecialidad: number | null;
 }

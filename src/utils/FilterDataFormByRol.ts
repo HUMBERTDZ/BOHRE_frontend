@@ -40,7 +40,7 @@ export const FilterDataFormByRol = (
       situacion: data.situacion,
       idGrupoSemestre: data.idGrupoSemestre,
       idGeneracion: data.idGeneracion,
-      idEspecialidad: data.idEspecialidad,
+      idEspecialidad: data.idEspecialidad != 0 ? data.idEspecialidad : null,
     };
   }
 
