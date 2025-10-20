@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { Data } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface"
+import type { General } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface"
 
 interface GrupoInfoCardProps {
-  data: Data
+  data: General
 }
 
 export function GrupoInfoCard({ data }: GrupoInfoCardProps) {

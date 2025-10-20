@@ -1,9 +1,10 @@
 import { AdminLayout } from "@/layout/AdminLayout";
 import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
-import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestresDetailsPage";
-import { GruposSemestresPage } from "@/pages/admin/GruposSemestresPage";
-import { UserDetailsPage } from "@/pages/admin/UserDetailsPage";
-import { UsersPage } from "@/pages/admin/UsersPage";
+import { EspecialidadesPage } from "@/pages/admin/Especialidades/EspecialidadesPage";
+import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestres/GruposSemestresDetailsPage";
+import { GruposSemestresPage } from "@/pages/admin/GruposSemestres/GruposSemestresPage";
+import { UserDetailsPage } from "@/pages/admin/Users/UserDetailsPage";
+import { UsersPage } from "@/pages/admin/Users/UsersPage";
 import { Route, Routes } from "react-router";
 
 /**
@@ -41,7 +42,8 @@ export const AdminRoutes = () => {
           <Route path="detalles/:idGrupoSemestre" element={<GruposSemestresDetailsPage />} />
         </Route>
 
-        <Route path="ciclos" element={<h1>ciclos</h1>} />
+        <Route path="especialidades" element={<EspecialidadesPage />} />
+        <Route path="generaciones" element={<h1>Generaciones</h1>} />
         <Route path="generaciones" element={<h1>Generaciones</h1>} />
       </Route>
     </Routes>

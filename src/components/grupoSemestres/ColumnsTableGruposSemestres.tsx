@@ -124,7 +124,7 @@ export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Da
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} className="focus:bg-green-100 focus:text-green-500 text-green-500">
                 <Link to={`detalles/${original.idGrupoSemestre}`} className="flex gap-2 items-center">
-                  <Eye className="text-current" /> Ver alumnos
+                  <Eye className="text-current" /> Ver detalles
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

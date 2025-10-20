@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Alumno } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -17,55 +17,72 @@ interface AlumnosTableProps {
 
 export function AlumnosTable({ alumnos }: AlumnosTableProps) {
   return (
-    <Card className="border-border/50 p-2">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-border/50">
-              <TableHead className="font-semibold">NIA</TableHead>
-              <TableHead className="font-semibold">Nombre</TableHead>
-              <TableHead className="font-semibold">Apellido Paterno</TableHead>
-              <TableHead className="font-semibold">Apellido Materno</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {alumnos.length === 0 || !alumnos[0].id  ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  No hay alumnos registrados en este grupo
-                </TableCell>
+    <Card className="border-border/50">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">
+          Alumnos del semestre y grupo
+        </CardTitle>
+      </CardHeader>
+      <div className="p-2">
+        <div className="overflow-x-auto">
+          <Table className="text-center">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-border/50">
+                <TableHead className="font-semibold text-center">NIA</TableHead>
+                <TableHead className="font-semibold text-center">
+                  Nombre
+                </TableHead>
+                <TableHead className="font-semibold text-center">
+                  Apellido Paterno
+                </TableHead>
+                <TableHead className="font-semibold text-center">
+                  Apellido Materno
+                </TableHead>
+                <TableHead className="font-semibold text-center">
+                  Especialidad
+                </TableHead>
               </TableRow>
-            ) : (
-              alumnos.map((alumno) => {
-                if (alumno.id === undefined) return null;
-
-                return (
-                  <TableRow
-                    key={alumno.id}
-                    className="border-border/50 hover:bg-accent/50 transition-colors"
+            </TableHeader>
+            <TableBody>
+              {alumnos.length === 0 || !alumnos[0].id ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className="text-center text-muted-foreground py-8"
                   >
-                    <TableCell className="font-mono text-sm">
-                      {alumno.nia}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {alumno.nombre}
-                    </TableCell>
-                    <TableCell>{alumno.apellidoPaterno}</TableCell>
-                    <TableCell>{alumno.apellidoMaterno}</TableCell>
-                    <TableCell>
-                      <Link to={`/usuarios/alumno/${alumno.id}`}>
-                        <Button>Ver detalles</Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
+                    No hay alumnos registrados en este grupo
+                  </TableCell>
+                </TableRow>
+              ) : (
+                alumnos.map((alumno) => {
+                  if (alumno.id === undefined) return null;
+
+                  return (
+                    <TableRow
+                      key={alumno.id}
+                      className="border-border/50 hover:bg-accent/50 transition-colors"
+                    >
+                      <TableCell className="font-mono text-sm">
+                        {alumno.nia}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {alumno.nombre}
+                      </TableCell>
+                      <TableCell>{alumno.apellidoPaterno}</TableCell>
+                      <TableCell>{alumno.apellidoMaterno}</TableCell>
+                      <TableCell>{alumno.especialidad}</TableCell>
+                      <TableCell>
+                        <Link to={`/usuarios/alumno/${alumno.id}`}>
+                          <Button>Ver detalles</Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </Card>
   );

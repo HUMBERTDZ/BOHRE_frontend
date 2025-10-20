@@ -1,4 +1,4 @@
-import { AArrowUp, CalendarRange, Home, LibraryBig, Users } from "lucide-react";
+import { AArrowUp, CalendarRange, Handshake, Home, LibraryBig, Users } from "lucide-react";
 
 const admin = [
   { title: "Inicio", url: "inicio", icon: Home },
@@ -27,6 +27,13 @@ const admin = [
     icon: AArrowUp,
     submenus: [
       { title: "Todos", url: "grupos_semestres" },
+    ],
+  },
+  {
+    title: "Especialidades",
+    icon: Handshake,
+    submenus: [
+      { title: "Todos", url: "especialidades" },
     ],
   },
   {
