@@ -68,7 +68,6 @@ export const AsignaturaForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen,
       if (tipoSeleccionado === "comun") {
         reset((formValues) => ({
           ...formValues,
-          idEspecialidad: 0,
         }));
       }
     }, [tipoSeleccionado, reset]);

@@ -1,8 +1,12 @@
 import { EspecialidadesActions } from "@/api/especialidades/actions/EspecialidadesActions";
-import { useQuery } from "@tanstack/react-query";
+import type { Especialidad } from "@/api/especialidades/interfaces/EspecialidadesInterfaces";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useEspecialidades = () => {
-  const { fetchEspecialidades } = EspecialidadesActions();
+  const { fetchEspecialidades, createEspecialidad, updateEspecialidad, getAsignaturasByEspecialidad } =
+    EspecialidadesActions();
+
+  const queryClient = useQueryClient();
 
   const getEspecialidades = () => {
     return useQuery({
@@ -12,5 +16,29 @@ export const useEspecialidades = () => {
     });
   };
 
-  return { getEspecialidades };
+  const getAsignaturasByEspecialidadId = (id: number) => {
+    return useQuery({
+      queryKey: ["asignaturas-especialidad", id],
+      queryFn: () => getAsignaturasByEspecialidad(id),
+      staleTime: 1000 * 60 * 30, // 30 minutos
+    });
+  };
+
+  const addEspecialidad = useMutation({
+    mutationFn: createEspecialidad,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["especialidades"] });
+    },
+  });
+
+  const getUpdateEspecialidad = useMutation({
+    mutationFn: ({id, data}: { id: number; data: Especialidad }) => updateEspecialidad(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["especialidades"] });
+    },
+  });
+
+  
+
+  return { getEspecialidades, getAsignaturasByEspecialidadId, addEspecialidad, getUpdateEspecialidad };
 };

@@ -1,5 +1,6 @@
 import { AdminLayout } from "@/layout/AdminLayout";
 import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
+import { AsignaturasEspecialidades } from "@/pages/admin/Especialidades/AsignaturasEspecialidades";
 import { EspecialidadesPage } from "@/pages/admin/Especialidades/EspecialidadesPage";
 import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestres/GruposSemestresDetailsPage";
 import { GruposSemestresPage } from "@/pages/admin/GruposSemestres/GruposSemestresPage";
@@ -42,7 +43,10 @@ export const AdminRoutes = () => {
           <Route path="detalles/:idGrupoSemestre" element={<GruposSemestresDetailsPage />} />
         </Route>
 
-        <Route path="especialidades" element={<EspecialidadesPage />} />
+        <Route path="especialidades">
+          <Route index element={<EspecialidadesPage />} />
+          <Route path="detalles/:idEspecialidad" element={<AsignaturasEspecialidades />} />
+        </Route>
         <Route path="generaciones" element={<h1>Generaciones</h1>} />
         <Route path="generaciones" element={<h1>Generaciones</h1>} />
       </Route>

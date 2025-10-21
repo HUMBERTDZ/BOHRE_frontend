@@ -1,22 +1,11 @@
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import {
-  ChevronDown,
-  ChevronUp,
-  MoreHorizontal,
-  Pen,
-  Trash,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Pen, } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,} from "../ui/dropdown-menu";
+import { Link } from "react-router";
+import type { Especialidad } from "@/api/especialidades/interfaces/EspecialidadesInterfaces";
+
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -48,15 +37,13 @@ const SortButton = ({
   );
 };
 
-
-interface props {
-  onDelete: (asignatura: Asignatura) => void;
-  onFetch: (asignaturaId: number) => void;
-  //onPrefetch: (asignaturaId: number) => void;
+interface ColumnsEspecialidadesProps {
+  setEspecialidadToUpdate: (especialidad: Especialidad | null) => void;
 }
 
+
 // Función que crea las columnas (sin hooks)
-export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef<Asignatura>[] => {
+export const ColumnsEspecialidades = ({ setEspecialidadToUpdate }: ColumnsEspecialidadesProps): ColumnDef<Especialidad>[] => {
   return [
     {
       id: "select",
@@ -81,10 +68,10 @@ export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef
       enableHiding: false,
     },
     {
-      accessorKey: "idAsignatura",
-      header: "ID",
+      accessorKey: "id",
+      header: "Id",
       cell: ({ row }) => {
-        const id = row.getValue("idAsignatura") as string;
+        const id = row.getValue("id") as string;
         return <span className="font-medium">{id}</span>;
       },
       enableSorting: false,
@@ -92,39 +79,8 @@ export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef
     },
     {
       accessorKey: "nombre",
-      header: ({ column }) => <SortButton column={column} text="NOMBRE" />,
-      cell: ({ row }) => {
-        const texto = row.getValue("nombre") as string;
-        return (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="block max-w-[180px] truncate cursor-help text-center mx-auto">
-                {texto}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="max-w-xs break-words">{texto}</p>
-            </TooltipContent>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      accessorKey: "tipo",
       header: ({ column }) => {
-        return <SortButton column={column} text="TIPO" />;
-      },
-    },
-    {
-      accessorKey: "semestre",
-      header: ({ column }) => {
-        return <SortButton column={column} text="SEMESTRE" />;
-      },
-    },
-    {
-      accessorKey: "especialidad",
-      header: ({ column }) => {
-        return <SortButton column={column} text="ESPECIALIDAD" />;
+        return <SortButton column={column} text="NOMBRE" />;
       },
     },
     {
@@ -141,16 +97,13 @@ export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => { onFetch(original.idAsignatura); }}
-                className="focus:bg-green-100 focus:text-green-500 text-green-500"
-              >
-                <Pen className="text-current" />
-                Actualizar
+              <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500" onClick={() => setEspecialidadToUpdate(original)}>
+                <Pen className="text-current" /> Actualizar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { onDelete(original); }} className="focus:bg-red-100 focus:text-red-500 text-red-500">
-                <Trash className="text-current" />
-                Eliminar
+              <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500">
+                <Link to={`detalles/${original.id}`} className="flex gap-2 items-center">
+                  <Eye className="text-current" /> Ver detalles
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
