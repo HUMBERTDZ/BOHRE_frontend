@@ -15,7 +15,7 @@ export function GrupoInfoCard({ data }: GrupoInfoCardProps) {
             <CardTitle className="text-2xl font-semibold text-balance">Grupo {data.grupo}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">ID: {data.idGrupoSemestre}</p>
           </div>
-          <Badge variant="secondary" className="text-sm">
+          <Badge variant="default" className="text-sm">
             Semestre {data.semestre}
           </Badge>
         </div>
@@ -28,7 +28,7 @@ export function GrupoInfoCard({ data }: GrupoInfoCardProps) {
           </div>
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Total de alumnos</p>
-            <p className="text-2xl font-semibold text-primary">{data.alumnos.length}</p>
+            <p className="text-2xl font-semibold text-primary">{data.alumnos.length == 1 && !data.alumnos[0].id ? "No hay alumnos" : data.alumnos.length}</p>
           </div>
         </div>
       </CardContent>

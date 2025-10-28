@@ -292,6 +292,10 @@ export const useUsersMutations = () => {
           "start"
         );
       }
+
+      if (context?.deletedUser?.rol === "docente") {
+        queryClient.invalidateQueries({ queryKey: ["docentes"] });
+      }
     },
 
     onError: (error, userId, context) => {

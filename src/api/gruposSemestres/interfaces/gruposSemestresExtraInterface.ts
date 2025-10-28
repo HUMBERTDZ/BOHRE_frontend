@@ -1,3 +1,5 @@
+// interfaces/gruposSemestresExtraInterface.ts
+
 export interface ResponseAlumnosGrupos {
   message: string;
   data: Data;
@@ -5,16 +7,43 @@ export interface ResponseAlumnosGrupos {
 
 export interface Data {
   general: General;
-  asignaturas: Asignatura[];
+  clases: Clases;
+  anio: number;
+  estadisticas: Estadisticas;
+  advertencia?: string; // Opcional, solo si no hay clases
 }
 
-export interface Asignatura {
+export interface Clases {
+  troncoComun: Clase[];
+  especialidades: EspecialidadesClases;
+}
+
+export interface EspecialidadesClases {
+  ALIMENTOS?: Clase[];
+  SALUD?: Clase[];
+  ADMINISTRACIÓN?: Clase[];
+}
+
+export interface Clase {
+  idClase: number;
+  anio: number;
+  idGrupoSemestre: number;
+  semestre: number;
+  grupo: string;
   idAsignatura: number;
-  nombre: string;
-  tipo: string;
-  semestre: string;
-  periodo: string;
+  nombreAsignatura: string;
+  tipoAsignatura: string;
+  idEspecialidad: number | null;
   especialidad: string;
+  idDocente: number | null;
+  nombreDocente: string | null;
+  alumnosInscritos: number;
+}
+
+export interface Estadisticas {
+  totalClases: number;
+  clasesConDocente: number;
+  clasesSinDocente: number;
 }
 
 export interface General {
@@ -31,5 +60,5 @@ export interface Alumno {
   nombre: string;
   apellidoMaterno: string;
   apellidoPaterno: string;
-  especialidad: string;
+  especialidad: string | null;
 }

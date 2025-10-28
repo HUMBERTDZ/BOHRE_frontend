@@ -1,9 +1,6 @@
-"use client";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
@@ -28,43 +25,43 @@ export const GruposSemestresDetailsPage = () => {
     return <Loading message="Cargando detalles del grupo semestre..." />;
   }
 
+  // Validación adicional: si no hay datos
+  if (!response || !response.data) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-muted-foreground">No se encontraron datos</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <header>
         <Breadcrumb>
           <BreadcrumbList>
-            {/* inicio */}
             <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link to="/">Inicio</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator />
+              <Link to="/">Inicio</Link>
             </BreadcrumbItem>
-            {/* usuarios */}
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link to="/grupos_semestres">Grupos y Semestres</Link>
-              </BreadcrumbLink>
-              <BreadcrumbSeparator />
+              <Link to="/grupos_semestres">Grupos y Semestres</Link>
             </BreadcrumbItem>
-            {/* usuarios */}
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link to={`/grupos_semestres/detalles/${idGrupoSemestre}`}>
-                  Detalle
-                </Link>
-              </BreadcrumbLink>
+              <Link to={`/grupos_semestres/detalles/${idGrupoSemestre}`}>
+                Detalle
+              </Link>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <h1 className="font-bold text-center text-lg lg:text-2xl">
-          Alumnos y asignaturas de {" "}
-          {response?.data.general.semestre}
-          {response?.data.general.grupo}
+          Alumnos y clases de {response.data.general?.semestre}°
+          {response.data.general?.grupo} - Ciclo {response.data.anio}
         </h1>
         <p className="text-gray-500">
-          Aquí puedes ver los alumnos que pertenecen al grupo. Además, las asignaturas destinadas al semestre seleccionado.
+          Aquí puedes ver los alumnos que pertenecen al grupo y gestionar las
+          clases del semestre seleccionado.
         </p>
       </header>
 
@@ -72,9 +69,29 @@ export const GruposSemestresDetailsPage = () => {
         <div className="h-full py-6">
           <ScrollArea className="h-full">
             <div className="w-full mx-auto space-y-6 pb-6">
-              <GrupoInfoCard data={response?.data.general!} />
-              <AlumnosTable alumnos={response?.data.general.alumnos!} />
-              <AsignaturasTable asignaturas={response?.data.asignaturas!} />
+              {response.data.general && (
+                <GrupoInfoCard data={response.data.general} />
+              )}
+
+              <AsignaturasTable
+                clasesTroncoComun={response.data.clases?.troncoComun || []}
+                clasesEspecialidades={
+                  response.data.clases?.especialidades || {}
+                }
+                anio={response.data.anio || new Date().getFullYear()}
+                estadisticas={
+                  response.data.estadisticas || {
+                    totalClases: 0,
+                    clasesConDocente: 0,
+                    clasesSinDocente: 0,
+                  }
+                }
+                advertencia={response.data.advertencia}
+              />
+
+              {response.data.general?.alumnos && (
+                <AlumnosTable alumnos={response.data.general.alumnos} />
+              )}
             </div>
           </ScrollArea>
         </div>

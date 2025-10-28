@@ -748,15 +748,17 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
                                       Cargando...
                                     </SelectItem>
                                   ) : (
-                                    grupoSemestresData?.data?.map((grupo) => (
-                                      <SelectItem key={grupo.id} value={grupo.id.toString()}>
-                                        {grupo.numeroSemestre}°{" "}
-                                        {grupo.nombreGrupo}{" "}
-                                        <span className="text-gray-400">
-                                          ({grupo.periodoSemestre})
-                                        </span>
-                                      </SelectItem>
-                                    ))
+                                    grupoSemestresData?.data
+                                      ?.filter((grupo) => update?.userToUpdate
+                                          ? grupo.id >= (update.userToUpdate.idGrupoSemestre ?? 0)
+                                          : true
+                                      )
+                                      .map((grupo) => (
+                                        <SelectItem key={grupo.id} value={grupo.id.toString()}>
+                                          {grupo.numeroSemestre}° {grupo.nombreGrupo}{" "}
+                                          <span className="text-gray-400">({grupo.periodoSemestre})</span>
+                                        </SelectItem>
+                                      ))
                                   )}
                                 </SelectContent>
                               </Select>
@@ -777,7 +779,13 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
                           <Controller name="idGeneracion" control={control}
                             rules={{ required: rolSeleccionado === "alumno" ? "La generación es requerida" : false,}}
                             render={({ field }) => (
-                              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()} disabled={isFetchingGenerations}>
+                              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()} 
+                                disabled={
+                                  isFetchingGenerations
+                                  || update?.userToUpdate?.idGeneracion !== undefined
+                                  && update?.userToUpdate?.idGeneracion !== null
+                                }
+                                >
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder="Generación" />
                                 </SelectTrigger>

@@ -82,3 +82,19 @@ export interface UserSemiComplete {
   idEspecialidad: number | null;
   especialidadNombre: string | null;
 }
+
+
+export interface Docente {
+  id: number;
+  nombreCompleto: string;
+  nombre: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+  cedulaProfesional: string;
+  correo: string;
+}
+
+export interface ResponseDocentes {
+  message: string;
+  data: Docente[];
+}

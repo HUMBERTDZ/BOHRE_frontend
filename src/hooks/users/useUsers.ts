@@ -29,6 +29,8 @@ export const useUsers = () => {
     fetchUsersDeleted,
     addUser,
     updateUser,
+    getAllDocentes,
+    asignarDocenteAClase
   } = UserActions();
 
   /**
@@ -271,6 +273,10 @@ export const useUsers = () => {
       queryClient.invalidateQueries({ queryKey: ["gruposSemestres"] });
       queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
 
+      if (context?.optimisticUser?.rol === "docente") {
+        queryClient.invalidateQueries({ queryKey: ["docentes"] });
+      }
+
     },
 
     // Si hay error, elimina el usuario optimista
@@ -494,6 +500,30 @@ export const useUsers = () => {
     },
   });
 
+
+  // Obtener lista de docentes
+  const getDocentes = () => {
+    return useQuery({
+      queryKey: ["docentes"],
+      queryFn: getAllDocentes,
+      staleTime: 1000 * 60 * 30,
+    });
+  };
+
+  // Asignar docente a clase
+  const asignarDocente = useMutation({
+    mutationFn: ({ idClase, idDocente }: { idClase: number; idDocente: number | null }) => asignarDocenteAClase(idClase, idDocente),
+    onSuccess: (data, variables) => {
+      // Invalidar queries relacionadas
+      queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
+      
+      // Opcional: actualizar optimísticamente
+      queryClient.setQueryData(["clase", variables.idClase], data);
+    },
+  });
+
+
+
   return {
     getUsers,
     prefetchAllCompleteUserData,
@@ -504,5 +534,7 @@ export const useUsers = () => {
     getLocalidades,
     agregarUsuarioOptimistic,
     actualizarUsuarioOptimistic,
+    getDocentes,
+    asignarDocente
   };
 };

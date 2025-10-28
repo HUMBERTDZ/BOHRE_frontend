@@ -5,6 +5,7 @@ import type { TopLevelLocalidades } from "../interfaces/Localidades";
 import type { TopLevelMunicipios } from "../interfaces/Municipios";
 import type {
   ResponseAddUser,
+  ResponseDocentes,
   ResponseUserPaginated,
   ResponseUserSemiComplete,
   User,
@@ -248,6 +249,18 @@ export const UserActions = () => {
     }
   };
 
+  const getAllDocentes = async (): Promise<ResponseDocentes> => {
+    const { data } = await BaseAPI.get(`/docentes`);
+    return data;
+  };
+
+  const asignarDocenteAClase = async (idClase: number, idDocente: number | null) => {
+    const { data } = await BaseAPI.patch(`/clases/${idClase}/asignar-docente`,
+      { idDocente }
+    );
+    return data;
+  };
+
   return {
     fetchUsers,
     fetchCompleteUserData,
@@ -259,5 +272,7 @@ export const UserActions = () => {
     forceDeleteUser,
     restoreUser,
     updateUser,
+    getAllDocentes,
+    asignarDocenteAClase,
   };
 };

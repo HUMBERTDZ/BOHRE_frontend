@@ -47,7 +47,7 @@ export function AlumnosTable({ alumnos }: AlumnosTableProps) {
               {alumnos.length === 0 || !alumnos[0].id ? (
                 <TableRow>
                   <TableCell
-                    colSpan={4}
+                    colSpan={5}
                     className="text-center text-muted-foreground py-8"
                   >
                     No hay alumnos registrados en este grupo
