@@ -134,9 +134,11 @@ export const ColumnsTableUsers = ( { onDelete, onFetch, onUserPrefetch }: props)
                 <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => onUserPrefetch(original.rol.toLowerCase(), original.id)} asChild>
+              <DropdownMenuItem onMouseEnter={() => onUserPrefetch(original.rol.toLowerCase(), original.id)} asChild
+                className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500"
+                >
                 <Link to={`${original.rol.toLowerCase()}/${original.id}`}>
-                  <Eye />
+                  <Eye className="text-current" />
                   Ver detalles
                 </Link>
               </DropdownMenuItem>

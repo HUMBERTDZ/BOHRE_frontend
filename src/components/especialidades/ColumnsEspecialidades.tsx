@@ -100,9 +100,14 @@ export const ColumnsEspecialidades = ({ setEspecialidadToUpdate }: ColumnsEspeci
               <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500" onClick={() => setEspecialidadToUpdate(original)}>
                 <Pen className="text-current" /> Actualizar
               </DropdownMenuItem>
-              <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500">
+              <DropdownMenuItem className="focus:bg-purple-100 focus:text-purple-500 text-purple-500">
+                <Link to={`asignaturas/${original.id}`} className="flex gap-2 items-center">
+                  <Eye className="text-current" /> Ver asignaturas
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500">
                 <Link to={`detalles/${original.id}`} className="flex gap-2 items-center">
-                  <Eye className="text-current" /> Ver detalles
+                  <Eye className="text-current" /> Ver Detalles
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

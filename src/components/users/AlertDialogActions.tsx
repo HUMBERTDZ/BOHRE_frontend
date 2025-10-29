@@ -5,12 +5,13 @@ import type { FC } from "react";
 interface AlertDialogActionProps {
   title: string;
   description: string;
+  danger?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }
 
-export const AlertDialogActions:FC<AlertDialogActionProps> = ({ title, description, open, onOpenChange, onConfirm, }) => {
+export const AlertDialogActions:FC<AlertDialogActionProps> = ({ title, description, danger, open, onOpenChange, onConfirm, }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -18,6 +19,7 @@ export const AlertDialogActions:FC<AlertDialogActionProps> = ({ title, descripti
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
             { description }
+            { danger && <span className="block mt-4 font-medium text-xs text-red-600">{danger}</span> }
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

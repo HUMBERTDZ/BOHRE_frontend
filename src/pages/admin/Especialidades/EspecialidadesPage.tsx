@@ -2,18 +2,12 @@ import type { Especialidad } from "@/api/especialidades/interfaces/Especialidade
 import { ColumnsEspecialidades } from "@/components/especialidades/ColumnsEspecialidades";
 import { DataTableEspecialidades } from "@/components/especialidades/DataTableEspecialidades";
 import { EspecialidadesForm } from "@/components/especialidades/EspecialidadesForm";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/ui/Header";
 import { Loading } from "@/components/ui/Loading";
 import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
 import { CircleFadingPlus } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
 
 export const EspecialidadesPage = () => {
   
@@ -40,26 +34,13 @@ export const EspecialidadesPage = () => {
 
   return (
     <>
-      <header>
-        <Breadcrumb>
-          <BreadcrumbList>
-            {/* inicio */}
-            <BreadcrumbItem>
-              <Link to="/inicio">Inicio</Link>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <Link to="/especialidades">Especialidades</Link>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <h1 className="font-bold text-center text-lg lg:text-2xl">
-          Especialidades
-        </h1>
-        <p className="text-gray-500">
-          En este módulo puedes ver las especialidades del sistema.
-        </p>
-      </header>
+      <Header
+        paths={[
+          { name: "Especialidades", link: "/especialidades" },
+        ]}
+        title="Especialidades"
+        description="Administración de las especialidades del sistema."
+       />
       <main>
         <EspecialidadesForm
           stateDialogOpen={stateDialogOpen}

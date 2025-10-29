@@ -10,8 +10,7 @@ import { UsersDeleted } from "@/components/users/UsersDeleted";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { Undo, UserPlusIcon } from "lucide-react";
 import { useUsersMutations } from "@/hooks/users/useUsersMutations";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Link } from "react-router";
+import { Header } from "@/components/ui/Header";
 
 export const UsersPage = () => {
   // funciones de usuarios con el custom hook
@@ -83,25 +82,13 @@ export const UsersPage = () => {
 
   return (
     <>
-      <header>
-        <Breadcrumb>
-          <BreadcrumbList>
-            {/* usuarios */}
-            <BreadcrumbItem>
-                <Link to="/inicio">Inicio</Link>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            {/* usuarios */}
-            <BreadcrumbItem>
-              <Link to="/usuarios">Usuarios</Link>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <h1 className="font-bold text-center text-lg lg:text-2xl">Usuarios</h1>
-        <p className="text-gray-500">
-          En este módulo puedes administrar a todos los usuarios del sistema.
-        </p>
-      </header>
+      <Header
+        paths={[
+          { name: "usuarios", link: "/usuarios" },
+        ]}
+        title="Usuarios"
+        description="En este módulo puedes administrar a todos los usuarios del sistema."
+       />
 
       <main>
         {/* formulario de usuario */}

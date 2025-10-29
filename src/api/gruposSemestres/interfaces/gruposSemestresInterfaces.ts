@@ -26,6 +26,7 @@ export interface Datum {
   grupo: string;
   semestre: number;
   periodoSemestre: string;
+  cicloEscolar: string;
   numeroAlumnos: number;
   numeroAsignaturas: number;
 }

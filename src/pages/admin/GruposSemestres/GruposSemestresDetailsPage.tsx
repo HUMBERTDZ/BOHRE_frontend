@@ -1,16 +1,12 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { useGruposSemestres } from "@/hooks/gruposSemestres/useGruposSemestres";
 import { AlumnosTable } from "./AlumnosTable";
 import { GrupoInfoCard } from "./GrupoInfoCard";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 import { AsignaturasTable } from "./AsignaturasTable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
+import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
+import { Header } from "@/components/ui/Header";
 
 export const GruposSemestresDetailsPage = () => {
   const { idGrupoSemestre } = useParams();
@@ -36,64 +32,54 @@ export const GruposSemestresDetailsPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <header>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <Link to="/">Inicio</Link>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <Link to="/grupos_semestres">Grupos y Semestres</Link>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <Link to={`/grupos_semestres/detalles/${idGrupoSemestre}`}>
-                Detalle
-              </Link>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+      <Header
+        paths={[
+          { name: 'grupos y semestres', link: '/grupos_semestres' },
+          { name: `detalle grupo ${response.data.general?.grupo}`, link: `/grupos_semestres/detalles/${idGrupoSemestre}` },
+        ]}
+        title={`Detalle del Grupo ${response.data.general?.grupo} - Semestre ${response.data.general?.semestre}`}
+        description={"Aquí puedes ver los detalles del grupo y semestre seleccionado."}
+      />
 
-        <h1 className="font-bold text-center text-lg lg:text-2xl">
-          Alumnos y clases de {response.data.general?.semestre}°
-          {response.data.general?.grupo} - Ciclo {response.data.anio}
-        </h1>
-        <p className="text-gray-500">
-          Aquí puedes ver los alumnos que pertenecen al grupo y gestionar las
-          clases del semestre seleccionado.
-        </p>
-      </header>
+      <main className="flex-1 flex flex-col p-4 space-y-6 overflow-hidden">
+        <GrupoInfoCard data={response.data.general} />
 
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full py-6">
-          <ScrollArea className="h-full">
-            <div className="w-full mx-auto space-y-6 pb-6">
-              {response.data.general && (
-                <GrupoInfoCard data={response.data.general} />
-              )}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Tabs
+            defaultValue="asignaturas"
+            className="flex flex-col flex-1 overflow-hidden"
+          >
+            <TabsList>
+              <TabsTrigger value="asignaturas">Asignaturas</TabsTrigger>
+              <TabsTrigger value="alumnos">Alumnos</TabsTrigger>
+            </TabsList>
 
-              <AsignaturasTable
-                clasesTroncoComun={response.data.clases?.troncoComun || []}
-                clasesEspecialidades={
-                  response.data.clases?.especialidades || {}
-                }
-                anio={response.data.anio || new Date().getFullYear()}
-                estadisticas={
-                  response.data.estadisticas || {
-                    totalClases: 0,
-                    clasesConDocente: 0,
-                    clasesSinDocente: 0,
+            <TabsContent value="asignaturas" className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full">
+                <AsignaturasTable
+                  clasesTroncoComun={response.data.clases?.troncoComun || []}
+                  clasesEspecialidades={
+                    response.data.clases?.especialidades || {}
                   }
-                }
-                advertencia={response.data.advertencia}
-              />
+                  anio={response.data.anio || new Date().getFullYear()}
+                  estadisticas={
+                    response.data.estadisticas || {
+                      totalClases: 0,
+                      clasesConDocente: 0,
+                      clasesSinDocente: 0,
+                    }
+                  }
+                  advertencia={response.data.advertencia && "Vuelva atrás y cree las clases para el nuevo periodo."}
+                />
+              </ScrollArea>
+            </TabsContent>
 
-              {response.data.general?.alumnos && (
+            <TabsContent value="alumnos" className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full">
                 <AlumnosTable alumnos={response.data.general.alumnos} />
-              )}
-            </div>
-          </ScrollArea>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>

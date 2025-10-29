@@ -4,7 +4,11 @@ import type { GruposSemestresResponse } from "@/api/gruposSemestres/interfaces/g
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 export const useGruposSemestres = () => {
-  const { getData, getExtraData } = gruposSemestresActions();
+  const {
+    getData,
+    getExtraData,
+    generateClases: genClases,
+  } = gruposSemestresActions();
 
   const getGruposSemestres = (
     page: number
@@ -26,5 +30,7 @@ export const useGruposSemestres = () => {
     });
   };
 
-  return { getGruposSemestres, getGrupoSemestreDetails };
+  const generateClases = () => genClases();
+
+  return { getGruposSemestres, getGrupoSemestreDetails, generateClases };
 };

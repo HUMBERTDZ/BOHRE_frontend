@@ -1,6 +1,7 @@
 import { AdminLayout } from "@/layout/AdminLayout";
 import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
 import { AsignaturasEspecialidades } from "@/pages/admin/Especialidades/AsignaturasEspecialidades";
+import { EspecialidadesDetailsPage } from "@/pages/admin/Especialidades/Calificaciones/EspecialidadesDetailsPage";
 import { EspecialidadesPage } from "@/pages/admin/Especialidades/EspecialidadesPage";
 import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestres/GruposSemestresDetailsPage";
 import { GruposSemestresPage } from "@/pages/admin/GruposSemestres/GruposSemestresPage";
@@ -45,7 +46,8 @@ export const AdminRoutes = () => {
 
         <Route path="especialidades">
           <Route index element={<EspecialidadesPage />} />
-          <Route path="detalles/:idEspecialidad" element={<AsignaturasEspecialidades />} />
+          <Route path="asignaturas/:idEspecialidad" element={<AsignaturasEspecialidades />} />
+          <Route path="detalles/:idEspecialidad" element={<EspecialidadesDetailsPage />} />
         </Route>
         <Route path="generaciones" element={<h1>Generaciones</h1>} />
         <Route path="generaciones" element={<h1>Generaciones</h1>} />

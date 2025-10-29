@@ -2,14 +2,13 @@ import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfa
 import { AsignaturaForm } from "@/components/asignaturas/AsignaturaForm";
 import { ColumnsTableAsignaturas } from "@/components/asignaturas/ColumnsTableAsignaturas";
 import { DataTable } from "@/components/asignaturas/DataTable";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator, } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/ui/Header";
 import { Loading } from "@/components/ui/Loading";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { useAsignaturas } from "@/hooks/asignaturas/useAsignaturas";
 import { CircleFadingPlus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 
 export const AsignaturasPage = () => {
   // hook de asignaturas
@@ -63,27 +62,13 @@ export const AsignaturasPage = () => {
 
   return (
     <>
-      <header>
-        <Breadcrumb>
-          <BreadcrumbList>
-            {/* inicio */}
-            <BreadcrumbItem>
-                <Link to="/inicio">Inicio</Link>
-            </BreadcrumbItem>
-              <BreadcrumbSeparator />
-            {/* asignaturas */}
-            <BreadcrumbItem>
-              Asignaturas
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <h1 className="font-bold text-center text-lg lg:text-2xl">
-          Asignaturas
-        </h1>
-        <p className="text-gray-500">
-          En este módulo puedes administrar todas las asignaturas del sistema.
-        </p>
-      </header>
+      <Header
+        paths={[
+          { name: "Asignaturas", link: "/asignaturas" },
+        ]} 
+        title="Asignaturas"
+        description="En este módulo puedes administrar todas las asignaturas del sistema."
+      />
 
       <main>
 

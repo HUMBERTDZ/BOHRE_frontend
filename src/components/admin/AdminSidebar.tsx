@@ -16,7 +16,7 @@ import {
 import {
   ChevronDown,
   ChevronUp,
-  HandMetal,
+  School,
   User2,
 } from "lucide-react";
 import {
@@ -44,7 +44,7 @@ export const AdminSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <HandMetal /> BOHRE
+              <School /> BOHRE
               <ChevronDown className="ml-auto" />
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -77,7 +77,7 @@ export const AdminSidebar = () => {
                                     <SidebarMenuSubButton
                                       className={
                                         isActive
-                                          ? " rounded-l-xs border-l-4 border-l-primary bg-red-50"
+                                          ? " rounded-l-xs border-l-4 border-l-primary bg-red-50 hover:bg-red-50"
                                           : ""
                                       }
                                     >

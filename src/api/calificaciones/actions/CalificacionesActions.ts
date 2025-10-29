@@ -1,5 +1,6 @@
 import { BaseAPI } from "@/api/BaseAPI";
 import type { ResponseCalificaciones } from "../interfaces/CalificacionesInterface";
+import type { ResponseEspecialidadDetalle } from "../interfaces/CalificacionesByEspecialidad";
 
 export const CalificacionesActions = () => {
   const getByClase = async (
@@ -20,8 +21,14 @@ export const CalificacionesActions = () => {
     return data;
   };
 
+  const getById = async (id: number): Promise<ResponseEspecialidadDetalle> => {
+    const { data } = await BaseAPI.get(`/especialidades/${id}`);
+    return data;
+  };
+
   return {
     getByClase,
     update,
+    getById,
   };
 };

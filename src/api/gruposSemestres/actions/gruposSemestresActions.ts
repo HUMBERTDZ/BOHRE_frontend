@@ -4,8 +4,10 @@ import axios from "axios";
 import type { ResponseError } from "@/api/GeneralInterface";
 import { toast } from "sonner";
 import type { ResponseAlumnosGrupos } from "../interfaces/gruposSemestresExtraInterface";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const gruposSemestresActions = () => {
+  const queryClient = useQueryClient();
   const getData = async (page: number): Promise<GruposSemestresResponse> => {
     try {
       const response = await BaseAPI.get<GruposSemestresResponse>(
@@ -47,8 +49,28 @@ export const gruposSemestresActions = () => {
     }
   };
 
+  const generateClases = async (): Promise<void> => {
+    try {
+      await BaseAPI.post("/clases/generar");
+      await queryClient.invalidateQueries({ queryKey: ["gruposSemestres"] });
+      toast.success("Clases generadas correctamente.");
+    } catch (error) {
+      if (axios.isAxiosError<ResponseError>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+      // Error desconocido
+      throw new Error("Ocurrió un error inesperado.");
+    }
+  }
+
   return {
     getData,
     getExtraData,
+    generateClases
   };
 };

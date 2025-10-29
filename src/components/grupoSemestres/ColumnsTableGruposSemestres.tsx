@@ -97,6 +97,12 @@ export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Da
       },
     },
     {
+      accessorKey: "cicloEscolar",
+      header: ({ column }) => {
+        return <SortButton column={column} text="CICLO ESCOLAR" />;
+      },
+    },
+    {
       accessorKey: "numeroAlumnos",
       header: ({ column }) => {
         return <SortButton column={column} text="NÚMERO ALUMNOS" />;
@@ -122,7 +128,7 @@ export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Da
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} className="focus:bg-green-100 focus:text-green-500 text-green-500">
+              <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500">
                 <Link to={`detalles/${original.idGrupoSemestre}`} className="flex gap-2 items-center">
                   <Eye className="text-current" /> Ver detalles
                 </Link>

@@ -1,10 +1,10 @@
-import { AArrowUp, CalendarRange, Handshake, Home, LibraryBig, Users } from "lucide-react";
+import { AArrowUp, CalendarRange, Handshake, Home, LibraryBig, UsersRound } from "lucide-react";
 
 const admin = [
   { title: "Inicio", url: "inicio", icon: Home },
   {
     title: "Usuarios",
-    icon: Users,
+    icon: UsersRound,
     submenus: [
       { title: "Todos", url: "usuarios" },
     /*   { title: "Alumnos", url: "usuarios/alumnos" },
@@ -33,15 +33,14 @@ const admin = [
     title: "Especialidades",
     icon: Handshake,
     submenus: [
-      { title: "Todos", url: "especialidades" },
+      { title: "Todas", url: "especialidades" },
     ],
   },
   {
     title: "Periodos",
     icon: CalendarRange,
     submenus: [
-      { title: "Ciclos escolares", url: "ciclos" },
-      { title: "Generaciones", url: "generaciones" },
+      { title: "Administración", url: "generaciones" },
     ],
   },
 ];
