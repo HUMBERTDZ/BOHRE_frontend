@@ -1,9 +1,9 @@
-import { DataTable } from "@/components/grupoSemestres/DataTable";
+import { DataTable } from "@/components/ui/my/DataTable";
 import { ColumnsTableGruposSemestres } from "@/components/grupoSemestres/ColumnsTableGruposSemestres";
 import { Loading } from "@/components/ui/Loading";
 import { useGruposSemestres } from "@/hooks/gruposSemestres/useGruposSemestres";
 import { useState } from "react";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
@@ -50,6 +50,7 @@ export const GruposSemestresPage = () => {
             total: data?.data.total || 0,
             onPageChange: setPage,
           }}
+        filterOptions={{ nombre: "Grupo", columnName: "grupo" }}
         >
           
           <DropdownMenu>
@@ -72,7 +73,7 @@ export const GruposSemestresPage = () => {
         open={open}
         onOpenChange={setOpen}
         title="Crear clases nuevo periodo"
-        description="Esta operación iniciará el siguiente periodo de semestre, creará nuevas clases y migrará a los estudiantes al siguiente semestre. ¿Deseas continuar?"
+        description="Esta operación iniciará el siguiente periodo de semestres, creará sus clases y migrará a los estudiantes al siguiente semestre. ¿Deseas continuar?"
         danger="Únicamente si la fecha actual se encuentra dentro del nuevo periodo."
         onConfirm={generateClases}
        />

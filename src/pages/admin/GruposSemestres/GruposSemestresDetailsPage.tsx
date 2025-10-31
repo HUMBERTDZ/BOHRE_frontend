@@ -6,7 +6,7 @@ import { AsignaturasTable } from "./AsignaturasTable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 
 export const GruposSemestresDetailsPage = () => {
   const { idGrupoSemestre } = useParams();

@@ -1,9 +1,9 @@
 import type { Especialidad } from "@/api/especialidades/interfaces/EspecialidadesInterfaces";
-import { ColumnsEspecialidades } from "@/components/especialidades/ColumnsEspecialidades";
-import { DataTableEspecialidades } from "@/components/especialidades/DataTableEspecialidades";
+import { ColumnsTableEspecialidades } from "@/components/especialidades/ColumnsTableEspecialidades";
 import { EspecialidadesForm } from "@/components/especialidades/EspecialidadesForm";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/ui/Header";
+import { DataTable } from "@/components/ui/my/DataTable";
+import { Header } from "@/components/ui/my/Header";
 import { Loading } from "@/components/ui/Loading";
 import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
 import { CircleFadingPlus } from "lucide-react";
@@ -19,7 +19,7 @@ export const EspecialidadesPage = () => {
 
   const [stateDialogOpen, setStateDialogOpen] = useState<boolean>(false);
   
-  const cols = ColumnsEspecialidades( { setEspecialidadToUpdate: (especialidad) => { setEspecialidadToUpdate(especialidad); setStateDialogOpen(true); } } );
+  const cols = ColumnsTableEspecialidades( { setEspecialidadToUpdate: (especialidad) => { setEspecialidadToUpdate(especialidad); setStateDialogOpen(true); } } );
 
 
   const handleCloseDialog = () => {
@@ -52,15 +52,19 @@ export const EspecialidadesPage = () => {
           }}
         />
 
-        <DataTableEspecialidades
+        <DataTable
           columns={cols}
           data={especialidadesData?.data || []}
+          filterOptions={{
+            nombre: "Nombre",
+            columnName: "nombre"
+          }}
         >
           <Button onClick={() => setStateDialogOpen(true)}>
             <CircleFadingPlus />
             Agregar Especialidad
           </Button>
-        </DataTableEspecialidades>
+        </DataTable>
       </main>
     </>
   );

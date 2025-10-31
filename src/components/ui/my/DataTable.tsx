@@ -1,12 +1,12 @@
 import { flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, } from "@tanstack/react-table";
 
-import type { ColumnDef, SortingState, ColumnFiltersState, VisibilityState, } from "@tanstack/react-table";
+import type { ColumnDef, SortingState, VisibilityState, } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../dropdown-menu";
 import { Eye } from "lucide-react";
 
 interface PaginationProps {
@@ -16,24 +16,29 @@ interface PaginationProps {
   onPageChange: (page: number) => void
 }
 
+interface filterOpctions {
+  nombre: string;
+  columnName: string;
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   children?: React.ReactElement;
   pagination?: PaginationProps;
+  filterOptions: filterOpctions;
 }
 
-export function DataTableEspecialidades<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
   children,
   pagination,
+  filterOptions
 }: DataTableProps<TData, TValue>) {
   // estados para la tabla
   // estado de ordenamiento
   const [sorting, setSorting] = useState<SortingState>([]);
-  // estado de filtros
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   // estado de visibilidad de columnas
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -45,12 +50,10 @@ export function DataTableEspecialidades<TData, TValue>({
     initialState: { pagination: { pageSize: 15 } },
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
-      columnFilters,
       columnVisibility,
     },
   });
@@ -58,10 +61,10 @@ export function DataTableEspecialidades<TData, TValue>({
   return (
     <div className="w-full">
       {/* Barra de búsqueda */}
-      <div className="flex items-center justify-between py-4">
-        <Input className="max-w-sm" placeholder="Filtrar por nombre..." value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""} 
+      <div className="flex items-center justify-between py-2">
+        <Input className="max-w-sm" placeholder={`Filtrar por ${filterOptions?.columnName}...`} value={(table.getColumn(filterOptions?.columnName)?.getFilterValue() as string) ?? ""} 
           onChange={(event) =>
-            table.getColumn("nombre")?.setFilterValue(event.target.value)
+            table.getColumn(filterOptions?.columnName)?.setFilterValue(event.target.value)
           }
         />
         <div className="flex gap-2 justify-between">
@@ -97,7 +100,7 @@ export function DataTableEspecialidades<TData, TValue>({
 
       {/* Tabla */}
       <div className="rounded-md border">
-        <Table  className="text-center">
+        <Table className="text-center">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

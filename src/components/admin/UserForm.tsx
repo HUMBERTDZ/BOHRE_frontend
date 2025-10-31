@@ -29,7 +29,7 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
 
   // obteniendo funciones desde el custom hooks
   const { getMunicipios, getLocalidades, } = useUsers();
-  const { fetchCurrentGenerations, fetchAllGrupoSemestres } = usePeriods();
+  const { getCurrentGenerations, getAllGrupoSemestres } = usePeriods();
   const { getEspecialidades } = useEspecialidades();
 
   // desestructurando props desde el hook de municipios
@@ -46,9 +46,9 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
   const rolSeleccionado = watch("rol");
 
   // obtener datas para llenar formulario
-  const { data: localidadesData, isFetching: isFetchingLocalidades } = getLocalidades(municipioSeleccionado ? parseInt(municipioSeleccionado) : 0);
-  const { data: generationsData, isFetching: isFetchingGenerations } = fetchCurrentGenerations(true);
-  const { data: grupoSemestresData, isFetching: isFetchingGrupoSemestres } = fetchAllGrupoSemestres();
+  const { data: localidadesData, isFetching: isFetchingLocalidades } = getLocalidades(municipioSeleccionado ? parseInt(municipioSeleccionado) : 1);
+  const { data: generationsData, isFetching: isFetchingGenerations } = getCurrentGenerations(true);
+  const { data: grupoSemestresData, isFetching: isFetchingGrupoSemestres } = getAllGrupoSemestres();
   const { data: especialidadesData, isFetching: isFetchingEspecialidades } = getEspecialidades();  
 
   /**
@@ -92,7 +92,6 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
         cedulaProfesional: "",
         numeroExpediente: 0,
         nia: "",
-        situacion: "",
         idGeneracion: 0,
         idGrupoSemestre: 0,
         idEspecialidad: 0,
@@ -103,7 +102,6 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
       reset((formValues) => ({
         ...formValues,
         nia: "",
-        situacion: "",
         idGeneracion: 0,
         idGrupoSemestre: 0,
         idEspecialidad: 0,
@@ -694,36 +692,6 @@ export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, updat
                           {errors.nia && (
                             <span className="text-xs block relative -top-1 text-red-400">
                               {errors.nia.message}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* situacion */}
-                        <div className="space-y-2">
-                          <Label htmlFor="situacion" className="block text-sm font-medium">
-                            Situación
-                          </Label>
-                          <Controller name="situacion" control={control}
-                            rules={{
-                              required: rolSeleccionado === "alumno" ? "La situación es requerida" : false,
-                            }}
-                            render={({ field }) => (
-                              <Select onValueChange={(value) => field.onChange(value)} value={field.value?.toString()}>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Situación" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="activo">Activo</SelectItem>
-                                  <SelectItem value="baja_temporal">Baja temporal</SelectItem>
-                                  <SelectItem value="baja_definitiva">Baja definitiva</SelectItem>
-                                  <SelectItem value="egresado">Egresado</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            )}
-                          />
-                          {errors.situacion && (
-                            <span className="text-xs block relative -top-1 text-red-400">
-                              {errors.situacion.message}
                             </span>
                           )}
                         </div>

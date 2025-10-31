@@ -1,10 +1,11 @@
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Pen, } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,} from "../ui/dropdown-menu";
-import { Link } from "react-router";
+import { ChevronDown, ChevronUp, Pen, } from "lucide-react";
+import { DropdownMenuItem, } from "../ui/dropdown-menu";
 import type { Especialidad } from "@/api/especialidades/interfaces/EspecialidadesInterfaces";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ButtonLink } from "../ui/my/ButtonLink";
 
 
 // pequeño componente para definir el icono
@@ -43,7 +44,7 @@ interface ColumnsEspecialidadesProps {
 
 
 // Función que crea las columnas (sin hooks)
-export const ColumnsEspecialidades = ({ setEspecialidadToUpdate }: ColumnsEspecialidadesProps): ColumnDef<Especialidad>[] => {
+export const ColumnsTableEspecialidades = ({ setEspecialidadToUpdate }: ColumnsEspecialidadesProps): ColumnDef<Especialidad>[] => {
   return [
     {
       id: "select",
@@ -88,30 +89,17 @@ export const ColumnsEspecialidades = ({ setEspecialidadToUpdate }: ColumnsEspeci
       cell: ({ row }) => {
         const { original } = row;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500" onClick={() => setEspecialidadToUpdate(original)}>
-                <Pen className="text-current" /> Actualizar
-              </DropdownMenuItem>
-              <DropdownMenuItem className="focus:bg-purple-100 focus:text-purple-500 text-purple-500">
-                <Link to={`asignaturas/${original.id}`} className="flex gap-2 items-center">
-                  <Eye className="text-current" /> Ver asignaturas
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500">
-                <Link to={`detalles/${original.id}`} className="flex gap-2 items-center">
-                  <Eye className="text-current" /> Ver Detalles
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ActionOptionsMenu>
+            <DropdownMenuItem className="focus:bg-green-100 focus:text-green-500 text-green-500" onClick={() => setEspecialidadToUpdate(original)}>
+              <Pen className="text-current" /> Actualizar
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <ButtonLink url={`asignaturas/${original.id}`} text="Ver asignaturas" color="purple" />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <ButtonLink url={`detalles/${original.id}`} />
+            </DropdownMenuItem>
+          </ActionOptionsMenu>
         );
       },
     },

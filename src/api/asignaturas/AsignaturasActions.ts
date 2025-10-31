@@ -6,12 +6,15 @@ import type {
   ResponseAsignaturaCreateOrUpdate,
 } from "./interfaces/AsignaturasInterfaces";
 import { toast } from "sonner";
-import type { ResponseError } from "../GeneralInterface";
+import type { ResponseError } from "../GeneralErrorInterface";
 
 export const AsignaturasActions = () => {
+
+  const baseAPI = BaseAPI("asignaturas");
+
   const fetchAsignaturas = async (page: number): Promise<ResponseAsignaturas> => {
     try {
-      const response = await BaseAPI.get<ResponseAsignaturas>(`/asignaturas`, {
+      const response = await baseAPI.get<ResponseAsignaturas>(`/`, {
         params: { page },
       });
       return response.data;
@@ -32,7 +35,7 @@ export const AsignaturasActions = () => {
 
   const fetchAsignatura = async (id: number): Promise<ResponseAsignaturaCreateOrUpdate> => {
     try {
-      const response = await BaseAPI.get<ResponseAsignaturaCreateOrUpdate>(`/asignaturas/${id}`);
+      const response = await baseAPI.get<ResponseAsignaturaCreateOrUpdate>(`/${id}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -51,10 +54,7 @@ export const AsignaturasActions = () => {
 
   const createAsignatura = async ( asignatura: AsignaturaToStore ): Promise<ResponseAsignaturaCreateOrUpdate> => {
     try {
-      const response = await BaseAPI.post<ResponseAsignaturaCreateOrUpdate>(
-        "/asignaturas",
-        asignatura
-      );
+      const response = await baseAPI.post<ResponseAsignaturaCreateOrUpdate>("/", asignatura);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -73,7 +73,7 @@ export const AsignaturasActions = () => {
 
   const updateAsignatura = async ( id: number, asignatura: AsignaturaToStore ): Promise<ResponseAsignaturaCreateOrUpdate> => {
     try {
-      const response = await BaseAPI.patch<ResponseAsignaturaCreateOrUpdate>(`/asignaturas/${id}`, asignatura);
+      const response = await baseAPI.patch<ResponseAsignaturaCreateOrUpdate>(`/${id}`, asignatura);
       return response.data;
   } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -92,7 +92,7 @@ export const AsignaturasActions = () => {
 
   const deleteAsignatura = async (id: number): Promise<{ message: string }> => {
     try {
-      const response = await BaseAPI.delete<{ message: string }>(`/asignaturas/${id}`);
+      const response = await baseAPI.delete<{ message: string }>(`/${id}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {

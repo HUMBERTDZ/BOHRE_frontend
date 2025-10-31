@@ -7,8 +7,8 @@ import { Button } from "../ui/button";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "../ui/select";
-import { useSemestres } from "@/hooks/semestres/useSemestres";
 import { useForms } from "@/hooks/asignaturas/useForms";
+import { usePeriods } from "@/hooks/periods/usePeriods";
 
 
 interface props {
@@ -24,7 +24,7 @@ interface props {
 export const AsignaturaForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, update, }) => {
   // hooks para especialidades y semestres
   const { getEspecialidades } = useEspecialidades();
-  const { getSemestres } = useSemestres();
+  const { getSemestres } = usePeriods();
   const { data: especialidades, isFetching: isFetchingEspecialidades } = getEspecialidades();
   const { data: semestres, isFetching: isFetchingSemestres } = getSemestres();
 

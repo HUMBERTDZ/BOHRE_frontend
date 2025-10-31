@@ -2,9 +2,10 @@ import type { User } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, Eye, MoreHorizontal, Trash, UserPen } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
-import { Link } from "react-router";
+import { ChevronDown, ChevronUp, Trash, UserPen } from "lucide-react";
+import { DropdownMenuItem, } from "../ui/dropdown-menu";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ButtonLink } from "../ui/my/ButtonLink";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -117,15 +118,7 @@ export const ColumnsTableUsers = ( { onDelete, onFetch, onUserPrefetch }: props)
       cell: ({ row }) => {
         const { original } = row;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+          <ActionOptionsMenu>
               <DropdownMenuItem onClick={() => onFetch({rol: original.rol.toLowerCase(), personId: original.id})} className="focus:bg-green-100 focus:text-green-500 text-green-500">
                 <UserPen className="text-current" />
                 Actualizar
@@ -134,16 +127,10 @@ export const ColumnsTableUsers = ( { onDelete, onFetch, onUserPrefetch }: props)
                 <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-              <DropdownMenuItem onMouseEnter={() => onUserPrefetch(original.rol.toLowerCase(), original.id)} asChild
-                className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500"
-                >
-                <Link to={`${original.rol.toLowerCase()}/${original.id}`}>
-                  <Eye className="text-current" />
-                  Ver detalles
-                </Link>
+              <DropdownMenuItem onMouseEnter={() => onUserPrefetch(original.rol.toLowerCase(), original.id)} asChild>
+                <ButtonLink url={`${original.rol.toLowerCase()}/${original.id}`} text="Ver detalles" />
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </ActionOptionsMenu>
         );
       },
     },

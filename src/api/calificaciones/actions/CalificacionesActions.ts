@@ -3,18 +3,16 @@ import type { ResponseCalificaciones } from "../interfaces/CalificacionesInterfa
 import type { ResponseEspecialidadDetalle } from "../interfaces/CalificacionesByEspecialidad";
 
 export const CalificacionesActions = () => {
-  const getByClase = async (
-    idClase: number
-  ): Promise<ResponseCalificaciones> => {
-    const { data } = await BaseAPI.get(`/clases/${idClase}/calificaciones`);
+
+  const baseAPI = BaseAPI();
+
+  const getByClase = async ( idClase: number ): Promise<ResponseCalificaciones> => {
+    const { data } = await baseAPI.get(`/clases/${idClase}/calificaciones`);
     return data;
   };
 
-  const update = async (
-    idCalificacion: number,
-    momentos: { momento1: number; momento2: number; momento3: number }
-  ) => {
-    const { data } = await BaseAPI.patch(
+  const update = async ( idCalificacion: number, momentos: { momento1: number; momento2: number; momento3: number } ) => {
+    const { data } = await baseAPI.patch(
       `/calificaciones/${idCalificacion}`,
       momentos
     );
@@ -22,7 +20,7 @@ export const CalificacionesActions = () => {
   };
 
   const getById = async (id: number): Promise<ResponseEspecialidadDetalle> => {
-    const { data } = await BaseAPI.get(`/especialidades/${id}`);
+    const { data } = await baseAPI.get(`/especialidades/${id}`);
     return data;
   };
 

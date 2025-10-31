@@ -1,6 +1,5 @@
 // actions/UserActions.ts
 import type { UsuarioFormData } from "@/components/admin/UsuarioFormInterface";
-import { BaseAPI } from "../../BaseAPI";
 import type { TopLevelLocalidades } from "../interfaces/Localidades";
 import type { TopLevelMunicipios } from "../interfaces/Municipios";
 import type {
@@ -10,16 +9,20 @@ import type {
   ResponseUserSemiComplete,
   User,
 } from "../interfaces/UserInterface";
-import { UsersAPI } from "../UsersAPI";
 import axios from "axios";
 //import { Waiter } from "@/utils/Waiter";
 import { toast } from "sonner";
-import type { ResponseError } from "@/api/GeneralInterface";
+import type { ResponseError } from "@/api/GeneralErrorInterface";
+import { BaseAPI } from "@/api/BaseAPI";
 
 export const UserActions = () => {
+
+  const baseAPI = BaseAPI();
+  const baseUsersAPI = BaseAPI("usuarios");
+
   // obtiene los municipios
   const fetchMunicipios = async (): Promise<TopLevelMunicipios> => {
-    const response = await BaseAPI.get(`/municipios`);
+    const response = await baseAPI.get(`/municipios`);
     return response.data;
   };
 
@@ -27,7 +30,7 @@ export const UserActions = () => {
   const fetchLocalidades = async (
     municipioId: number
   ): Promise<TopLevelLocalidades> => {
-    const response = await BaseAPI.get(`/localidades/${municipioId}`);
+    const response = await baseAPI.get(`/localidades/${municipioId}`);
     return response.data;
   };
 
@@ -41,7 +44,7 @@ export const UserActions = () => {
   ): Promise<ResponseUserPaginated> => {
     //await Waiter(5000); // Simula retardo de 5 segundos
     try {
-      const response = await UsersAPI.get<ResponseUserPaginated>("", {
+      const response = await baseUsersAPI.get<ResponseUserPaginated>("", {
         params: { page },
       });
 
@@ -78,9 +81,7 @@ export const UserActions = () => {
     rol: string
   ): Promise<ResponseUserSemiComplete> => {
     try {
-      const response = await UsersAPI.get<ResponseUserSemiComplete>("byRol", {
-        params: { rol, idPersona: personId },
-      });
+      const response = await baseUsersAPI.get<ResponseUserSemiComplete>(`/${rol}/${personId}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -105,7 +106,7 @@ export const UserActions = () => {
     page: number
   ): Promise<ResponseUserPaginated> => {
     try {
-      const response = await UsersAPI.get<ResponseUserPaginated>("/deleted", {
+      const response = await baseUsersAPI.get<ResponseUserPaginated>("/deleted", {
         params: { page },
       });
       return response.data;
@@ -133,7 +134,7 @@ export const UserActions = () => {
    * @returns { ResponseAddUser } data del usuario agregado
    */
   const addUser = async (data: UsuarioFormData): Promise<ResponseAddUser> => {
-    const response = await UsersAPI.post<ResponseAddUser>("/", data);
+    const response = await baseUsersAPI.post<ResponseAddUser>("/", data);
     return response.data;
   };
 
@@ -144,7 +145,7 @@ export const UserActions = () => {
    */
   const deleteUser = async (user: User): Promise<ResponseError> => {
     try {
-      const response = await UsersAPI.delete<ResponseError>(`/` + user.id);
+      const response = await baseUsersAPI.delete<ResponseError>(`/` + user.id);
 
       toast.success(response.data.message || "Usuario eliminado.");
 
@@ -171,7 +172,7 @@ export const UserActions = () => {
    */
   const forceDeleteUser = async (userId: number): Promise<ResponseError> => {
     try {
-      const response = await UsersAPI.delete<ResponseError>(
+      const response = await baseUsersAPI.delete<ResponseError>(
         `/delete/` + userId
       );
       toast.success(response.data.message || "Usuario eliminado.");
@@ -197,7 +198,7 @@ export const UserActions = () => {
    */
   const restoreUser = async (userId: number): Promise<ResponseAddUser> => {
     try {
-      const response = await UsersAPI.patch<ResponseAddUser>(
+      const response = await baseUsersAPI.patch<ResponseAddUser>(
         `/restore/` + userId
       );
       toast.success(response.data.message || "Usuario restaurado.");
@@ -228,7 +229,7 @@ export const UserActions = () => {
     data: Partial<UsuarioFormData>
   ): Promise<ResponseUserSemiComplete> => {
     try {
-      const response = await UsersAPI.patch<ResponseUserSemiComplete>(
+      const response = await baseUsersAPI.patch<ResponseUserSemiComplete>(
         `/${userId}`,
         data
       );
@@ -250,12 +251,12 @@ export const UserActions = () => {
   };
 
   const getAllDocentes = async (): Promise<ResponseDocentes> => {
-    const { data } = await BaseAPI.get(`/docentes`);
+    const { data } = await baseUsersAPI.get(`/docentes`);
     return data;
   };
 
   const asignarDocenteAClase = async (idClase: number, idDocente: number | null) => {
-    const { data } = await BaseAPI.patch(`/clases/${idClase}/asignar-docente`,
+    const { data } = await baseAPI.patch(`/clases/${idClase}/asignar-docente`,
       { idDocente }
     );
     return data;

@@ -7,7 +7,7 @@ import { EspecialidadInfoCard } from "./EspecialidadInfoCard";
 import { ClasesEspecialidadTable } from "./ClasesEspecialidadTable";
 import { AlumnosEspecialidadTable } from "./AlumnosEspecialidadTable";
 import { PlanEstudiosCard } from "./PlanEstudiosCard";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 
 export const EspecialidadesDetailsPage = () => {
   const { idEspecialidad } = useParams();

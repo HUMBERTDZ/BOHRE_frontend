@@ -1,16 +1,7 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Alumno } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface";
-import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { ButtonLink } from "@/components/ui/my/ButtonLink";
 
 interface AlumnosTableProps {
   alumnos: Alumno[];
@@ -73,13 +64,8 @@ export function AlumnosTable({ alumnos }: AlumnosTableProps) {
                       <TableCell>{alumno.apellidoMaterno}</TableCell>
                       <TableCell>{alumno.especialidad}</TableCell>
                       <TableCell>
-                          <Link to={`/usuarios/alumno/${alumno.id}`}>
-                            <Button variant="outline" size="sm">
-                              <User className="h-4 w-4 mr-2" />
-                              Ver perfil
-                            </Button>
-                          </Link>
-                        </TableCell>
+                          <ButtonLink url={`/usuarios/alumno/${alumno.id}`} text="Ver perfil" button={{ variant: "outline", size: "sm" }} />
+                      </TableCell>
                     </TableRow>
                   );
                 })

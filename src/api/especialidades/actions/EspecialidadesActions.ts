@@ -2,12 +2,15 @@ import { BaseAPI } from "@/api/BaseAPI";
 import type { AsignaturasEspecialidades, Especialidad, ResponseCreateEspecialidad, ResponseEspecialidades } from "../interfaces/EspecialidadesInterfaces";
 import axios from "axios";
 import { toast } from "sonner";
-import type { ResponseError } from "@/api/GeneralInterface";
+import type { ResponseError } from "@/api/GeneralErrorInterface";
 
 export const EspecialidadesActions = () => {
+
+  const baseAPI = BaseAPI("especialidades");
+
   const fetchEspecialidades = async (): Promise<ResponseEspecialidades> => {
     try {
-      const response = await BaseAPI.get<ResponseEspecialidades>("/especialidades");
+      const response = await baseAPI.get<ResponseEspecialidades>("/");
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -25,7 +28,7 @@ export const EspecialidadesActions = () => {
 
   const createEspecialidad = async (data: { nombre: string }): Promise<ResponseCreateEspecialidad> => {
     try {
-      const response = await BaseAPI.post<ResponseCreateEspecialidad>("/especialidades", data);
+      const response = await baseAPI.post<ResponseCreateEspecialidad>("/", data);
       toast.success("Especialidad creada exitosamente.");
       return response.data;
     } catch (error) {
@@ -44,7 +47,7 @@ export const EspecialidadesActions = () => {
 
   const updateEspecialidad = async (id: number, data: Especialidad): Promise<ResponseCreateEspecialidad> => {
     try {
-      const response = await BaseAPI.put<ResponseCreateEspecialidad>(`/especialidades/${id}`, data);
+      const response = await baseAPI.put<ResponseCreateEspecialidad>(`/${id}`, data);
       toast.success("Especialidad actualizada exitosamente.");
       return response.data;
     } catch (error) {
@@ -63,7 +66,7 @@ export const EspecialidadesActions = () => {
 
   const getAsignaturasByEspecialidad = async (id: number) => {
     try {
-      const response = await BaseAPI.get<AsignaturasEspecialidades>(`/especialidades/asignaturas/${id}`);
+      const response = await baseAPI.get<AsignaturasEspecialidades>(`/asignaturas/${id}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {

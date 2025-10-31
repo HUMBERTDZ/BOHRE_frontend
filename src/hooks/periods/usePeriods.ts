@@ -1,48 +1,63 @@
+import type { GeneracionesResponse, ResponseGrupoSemestres, ResponseSemestres, } from "@/api/periodos/actions/interfaces/PeriodosInterfaces";
 import { PeriodosActions } from "@/api/periodos/actions/PeriodosActions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 export const usePeriods = () => {
-  const { getAllGenerations, getCurrentGenerations, getAllGrupoSemestres } = PeriodosActions();
+  const {
+    fetchAllGenerations,
+    fetchCurrentGenerations,
+    fetchAllGrupoSemestres,
+    fetchSemestres,
+  } = PeriodosActions();
 
   /**
    * obtener todas las generaciones
-   * @returns 
+   * @returns
    */
-  const fetchAllGenerations = () => {
+  const getAllGenerations = (): UseQueryResult<GeneracionesResponse, Error> => {
     return useQuery({
       queryKey: ["periods"],
-      queryFn: getAllGenerations,
+      queryFn: fetchAllGenerations,
       staleTime: 1000 * 60 * 30, // 30 minutos
     });
   };
 
   /**
    * obtener todas las generaciones
-   * @returns 
+   * @returns
    */
-  const fetchCurrentGenerations = (current: boolean) => {
+  const getCurrentGenerations = (current: boolean): UseQueryResult<GeneracionesResponse, Error> => {
     return useQuery({
       queryKey: ["periods", "current", current],
-      queryFn: () => getCurrentGenerations(current),
+      queryFn: () => fetchCurrentGenerations(current),
       staleTime: 1000 * 60 * 30, // 30 minutos
     });
   };
 
   /**
    * obtener todos los grupos de semestres
-   * @returns 
+   * @returns
    */
-  const fetchAllGrupoSemestres = () => {
+  const getAllGrupoSemestres = (): UseQueryResult<ResponseGrupoSemestres, Error> => {
     return useQuery({
       queryKey: ["grupoSemestres"],
-      queryFn: getAllGrupoSemestres,
+      queryFn: fetchAllGrupoSemestres,
+      staleTime: 1000 * 60 * 30, // 30 minutos
+    });
+  };
+
+  const getSemestres = (): UseQueryResult<ResponseSemestres, Error> => {
+    return useQuery({
+      queryKey: ["semestres"],
+      queryFn: fetchSemestres,
       staleTime: 1000 * 60 * 30, // 30 minutos
     });
   };
 
   return {
-    fetchAllGenerations,
-    fetchAllGrupoSemestres,
-    fetchCurrentGenerations,
+    getAllGenerations,
+    getAllGrupoSemestres,
+    getCurrentGenerations,
+    getSemestres,
   };
 };

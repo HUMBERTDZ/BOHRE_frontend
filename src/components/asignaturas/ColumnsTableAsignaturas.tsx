@@ -1,22 +1,11 @@
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import {
-  ChevronDown,
-  ChevronUp,
-  MoreHorizontal,
-  Pen,
-  Trash,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { ChevronDown, ChevronUp, Pen, Trash, } from "lucide-react";
+import { DropdownMenuItem, } from "../ui/dropdown-menu";
 import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -132,15 +121,7 @@ export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef
       cell: ({ row }) => {
         const { original } = row;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+          <ActionOptionsMenu>
               <DropdownMenuItem
                 onClick={() => { onFetch(original.idAsignatura); }}
                 className="focus:bg-green-100 focus:text-green-500 text-green-500"
@@ -152,8 +133,7 @@ export const ColumnsTableAsignaturas = ({ onFetch, onDelete }: props): ColumnDef
                 <Trash className="text-current" />
                 Eliminar
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </ActionOptionsMenu>
         );
       },
     },

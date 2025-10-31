@@ -1,7 +1,7 @@
 import { UserForm } from "@/components/admin/UserForm";
 import { Button } from "@/components/ui/button";
 import { ColumnsTableUsers } from "@/components/users/ColumnsTableUsers";
-import { DataTable } from "@/components/users/DataTable";
+import { DataTable } from "@/components/ui/my/DataTable";
 import { useUsers } from "@/hooks/users/useUsers";
 import { useEffect, useState } from "react";
 import type { User, UserSemiComplete } from "@/api/users/interfaces/UserInterface";
@@ -10,7 +10,7 @@ import { UsersDeleted } from "@/components/users/UsersDeleted";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { Undo, UserPlusIcon } from "lucide-react";
 import { useUsersMutations } from "@/hooks/users/useUsersMutations";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 
 export const UsersPage = () => {
   // funciones de usuarios con el custom hook
@@ -110,6 +110,7 @@ export const UsersPage = () => {
               total: userData?.data.total || 0,
               onPageChange: setPage,
             }}
+          filterOptions={{ nombre: "Nombre", columnName: "nombre" }}
         >
           <>
             <Button onClick={() => setStateDialogUsersDeleted(true)} variant={"outline"}>

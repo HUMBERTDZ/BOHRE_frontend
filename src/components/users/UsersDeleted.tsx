@@ -2,11 +2,11 @@ import { useState, type FC } from "react";
 import {  AlertDialog,  AlertDialogCancel,  AlertDialogContent,  AlertDialogDescription,  AlertDialogFooter,  AlertDialogHeader,  AlertDialogTitle, } from "../ui/alert-dialog";
 import { useUsers } from "@/hooks/users/useUsers";
 import { Loading } from "../ui/Loading";
-import { DataTable } from "./DataTable";
 import { ColumnsTableDeletedUsers } from "./ColumnsTableDeletedUsers";
 import type { User } from "@/api/users/interfaces/UserInterface";
 import { AlertDialogActions } from "./AlertDialogActions";
 import { useUsersMutations } from "@/hooks/users/useUsersMutations";
+import { DataTable } from "../ui/my/DataTable";
 
 // Componente del AlertDialog de eliminación
 interface AlertDialogEliminarProps {
@@ -60,8 +60,10 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
           <AlertDialogHeader>
             <AlertDialogTitle>Usuarios eliminados</AlertDialogTitle>
             <AlertDialogDescription>
+            </AlertDialogDescription>
+            <div>
               Estos usuarios han sido eliminados. ¿Deseas recuperarlos?
-              <DataTable 
+              <DataTable
                 columns={columns} 
                 data={deletedUsers?.data.data || []}
                 pagination={{
@@ -70,8 +72,12 @@ export const UsersDeleted: FC<AlertDialogEliminarProps> = ({ open, onOpenChange 
                   total: deletedUsers?.data.total || 0,
                   onPageChange: setPage,
                 }}
+                filterOptions={{
+                  nombre: "Nombre",
+                  columnName: "nombre"
+                }}
               />
-            </AlertDialogDescription>
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cerrar</AlertDialogCancel>

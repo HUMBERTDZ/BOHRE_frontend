@@ -4,7 +4,7 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "./breadcrumb";
+} from "../breadcrumb";
 import type { FC } from "react";
 import React from "react";
 

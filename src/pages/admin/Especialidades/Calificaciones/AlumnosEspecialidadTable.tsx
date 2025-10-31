@@ -1,19 +1,10 @@
 // components/AlumnosEspecialidadTable.tsx
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
-import { User } from "lucide-react";
 import type { AlumnoEspecialidad } from "@/api/calificaciones/interfaces/CalificacionesByEspecialidad";
+import { ButtonLink } from "@/components/ui/my/ButtonLink";
 
 
 interface AlumnosEspecialidadTableProps {
@@ -91,12 +82,7 @@ export function AlumnosEspecialidadTable({
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Link to={`/usuarios/alumno/${alumno.idAlumno}`}>
-                            <Button variant="outline" size="sm">
-                              <User className="h-4 w-4 mr-2" />
-                              Ver perfil
-                            </Button>
-                          </Link>
+                          <ButtonLink url={`/usuarios/alumno/${alumno.idAlumno}`} text="Ver perfil" button={{ variant: "outline", size: "sm" }} />
                         </TableCell>
                       </TableRow>
                     ))}

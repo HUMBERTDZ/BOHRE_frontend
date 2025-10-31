@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 export const useCalificaciones = () => {
   const queryClient = useQueryClient();
 
-  const { getByClase, getById, update } = CalificacionesActions();
+  const { getByClase, update } = CalificacionesActions();
 
   const getCalificacionesByClase = (idClase: number) => {
     return useQuery({

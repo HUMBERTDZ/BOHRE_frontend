@@ -2,7 +2,7 @@ import { Loading } from "@/components/ui/Loading";
 import { useUsers } from "@/hooks/users/useUsers";
 import { useParams } from "react-router";
 import { UserProfile } from "./UserProfile";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 
 export const UserDetailsPage = () => {
   const { rol, idPerson } = useParams();

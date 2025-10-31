@@ -1,13 +1,25 @@
-export interface PeriodosResponse {
+export interface GeneracionesResponse {
     message: string;
-    data:    Datum[];
+    data:    Generacion[];
 }
 
-export interface Datum {
+export interface Generacion {
     id:           number;
     fechaIngreso: Date;
     fechaEgreso:  Date;
 }
+
+export interface ResponseSemestres {
+    message: string;
+    data:    Semestre[];
+}
+
+export interface Semestre {
+    id:      number;
+    numero:  number;
+    periodo: string;
+}
+
 
 export interface ResponseGrupoSemestres {
     message: string;

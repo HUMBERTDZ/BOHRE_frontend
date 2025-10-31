@@ -1,10 +1,11 @@
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, Eye, MoreHorizontal, } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,} from "../ui/dropdown-menu";
+import { ChevronDown, ChevronUp, } from "lucide-react";
+import { DropdownMenuItem, } from "../ui/dropdown-menu";
 import type { Datum } from "@/api/gruposSemestres/interfaces/gruposSemestresInterfaces";
-import { Link } from "react-router";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ButtonLink } from "../ui/my/ButtonLink";
 
 
 // pequeño componente para definir el icono
@@ -119,22 +120,11 @@ export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Da
       cell: ({ row }) => {
         const { original } = row;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} className="focus:bg-cyan-100 focus:text-cyan-500 text-cyan-500">
-                <Link to={`detalles/${original.idGrupoSemestre}`} className="flex gap-2 items-center">
-                  <Eye className="text-current" /> Ver detalles
-                </Link>
+          <ActionOptionsMenu>
+              <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} asChild>
+                <ButtonLink url={`detalles/${original.idGrupoSemestre}`} />
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </ActionOptionsMenu>
         );
       },
     },

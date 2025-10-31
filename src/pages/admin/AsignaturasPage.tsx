@@ -1,9 +1,9 @@
 import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
 import { AsignaturaForm } from "@/components/asignaturas/AsignaturaForm";
 import { ColumnsTableAsignaturas } from "@/components/asignaturas/ColumnsTableAsignaturas";
-import { DataTable } from "@/components/asignaturas/DataTable";
+import { DataTable } from "@/components/ui/my/DataTable";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/ui/Header";
+import { Header } from "@/components/ui/my/Header";
 import { Loading } from "@/components/ui/Loading";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 import { useAsignaturas } from "@/hooks/asignaturas/useAsignaturas";
@@ -91,6 +91,7 @@ export const AsignaturasPage = () => {
               total: data?.data.total || 0,
               onPageChange: setPage,
             }}
+          filterOptions={{ nombre: "Nombre", columnName: "nombre" }}
         >
           <Button onClick={() => setStateDialogOpen(true)}>
               <CircleFadingPlus />
