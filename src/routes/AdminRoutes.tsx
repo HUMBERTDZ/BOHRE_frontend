@@ -1,3 +1,4 @@
+import { Home } from "@/Home";
 import { AdminLayout } from "@/layout/AdminLayout";
 import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
 import { AsignaturasEspecialidades } from "@/pages/admin/Especialidades/AsignaturasEspecialidades";
@@ -21,7 +22,7 @@ export const AdminRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
-        <Route path="inicio" element={<h1>inicio</h1>} />
+        <Route path="inicio" element={<Home />} />
 
         <Route path="usuarios">
           <Route index element={<UsersPage />} />
