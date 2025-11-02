@@ -56,6 +56,7 @@ export interface General {
 
 export interface Alumno {
   id: number;
+  personaId: number;
   nia: string;
   nombre: string;
   apellidoMaterno: string;

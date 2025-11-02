@@ -122,7 +122,7 @@ export const AdminSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> ADMINISTRADOR
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -130,9 +130,6 @@ export const AdminSidebar = () => {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
-                  <span>Cuenta</span>
-                </DropdownMenuItem>
                 <DropdownMenuItem className="focus:bg-red-300">
                   <span>Cerrar sesión</span>
                 </DropdownMenuItem>

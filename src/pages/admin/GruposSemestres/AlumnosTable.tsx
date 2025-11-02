@@ -70,7 +70,7 @@ export function AlumnosTable({ alumnos, semestreNumero = 0 }: AlumnosTableProps)
           queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
         },
         onError: (error) => {
-          console.error("Error al asignar especialidad:", error);
+          toast.error(`Error al asignar especialidad: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         },
         onSettled: () => {
           setData(null);
@@ -151,7 +151,7 @@ export function AlumnosTable({ alumnos, semestreNumero = 0 }: AlumnosTableProps)
                           }
                         </TableCell>
                         <TableCell>
-                            <ButtonLink url={`/usuarios/alumno/${alumno.id}`} text="Ver perfil" button={{ variant: "outline", size: "sm" }} />
+                            <ButtonLink url={`/usuarios/alumno/${alumno.personaId}`} text="Ver perfil" button={{ variant: "outline", size: "sm" }} />
                         </TableCell>
                       </TableRow>
                     );
@@ -164,7 +164,7 @@ export function AlumnosTable({ alumnos, semestreNumero = 0 }: AlumnosTableProps)
       </Card>
       <AlertDialogActions
           title={`Asignar alumno a especialidad ${data?.especialidad?.nombre}`}
-          description={`${data?.alumno?.nombre} ${data?.alumno?.apellidoPaterno} ${data?.alumno?.apellidoMaterno}. ¿Estás seguro de que deseas asignar esta especialidad al alumno?`}
+          description={`${data?.alumno?.apellidoPaterno} ${data?.alumno?.apellidoMaterno} ${data?.alumno?.nombre}. ¿Estás seguro de que deseas asignar esta especialidad al alumno?`}
           danger="Esta acción no se puede deshacer."
           onConfirm={handleAsignarEspecialidad}
           open={!!data}

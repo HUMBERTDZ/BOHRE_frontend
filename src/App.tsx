@@ -8,8 +8,8 @@ function App() {
     defaultOptions: {
       queries: {
         retry: 2,
-        refetchOnWindowFocus: true, // Cambiado a true para refetch al enfocar la ventana
-        refetchOnReconnect: true, // Cambiado a true para refetch al reconectar la red
+        refetchOnWindowFocus: true, // Cambiado a true para refetch al enfocar la ventana (cuando las querys estan en stale)
+        refetchOnReconnect: true, // Cambiado a true para refetch al reconectar la red (cuando las querys estan en stale)
       },
     },
   });

@@ -263,10 +263,25 @@ export const UserActions = () => {
   };
 
   const asignarEspecialidadAlumno = async (idAlumno: number, idEspecialidad: number | null) => {
-    const { data } = await baseAPI.patch(`/alumno/asignarEspecialidad`,
-      { idAlumno, idEspecialidad }
-    );
-    return data;
+    try {
+      
+      const { data } = await baseAPI.patch(`/alumno/asignarEspecialidad`,
+        { idAlumno, idEspecialidad }
+      );
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError<ResponseError>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error("No se pudo conectar con el servidor.");
+        } 
+      }
+
+      // Error desconocido
+      throw new Error("Ocurrió un error inesperado.");
+    }
   }
 
   return {

@@ -1,6 +1,6 @@
-import { Home } from "@/Home";
+import { Home } from "@/pages/admin/Home";
 import { AdminLayout } from "@/layout/AdminLayout";
-import { AsignaturasPage } from "@/pages/admin/AsignaturasPage";
+import { AsignaturasPage } from "@/pages/admin/Asignaturas/AsignaturasPage";
 import { AsignaturasEspecialidades } from "@/pages/admin/Especialidades/AsignaturasEspecialidades";
 import { EspecialidadesDetailsPage } from "@/pages/admin/Especialidades/Calificaciones/EspecialidadesDetailsPage";
 import { EspecialidadesPage } from "@/pages/admin/Especialidades/EspecialidadesPage";
