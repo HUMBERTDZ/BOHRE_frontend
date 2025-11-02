@@ -12,7 +12,7 @@ import type { ResponseError } from "@/api/GeneralErrorInterface";
 import { BaseAPI } from "@/api/BaseAPI";
 
 export const PeriodosActions = () => {
-  const PeriodosAPI = BaseAPI("periodos");
+  const PeriodosAPI = BaseAPI({ prefix: "periodos" });
 
   // Obtener todas las generaciones
   const fetchAllGenerations = async (): Promise<GeneracionesResponse> => {

@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 export const dashBoardActions = () => {
-  const baseAPI = BaseAPI("dashboard");
+  const baseAPI = BaseAPI({ prefix: "dashboard" });
 
   const fetchDashboardData = async () => {
     try {

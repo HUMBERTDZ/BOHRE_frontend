@@ -37,7 +37,6 @@ export const FilterDataFormByRol = (
     return {
       ...camposBase,
       nia: data.nia,
-      situacion: data.situacion,
       idGrupoSemestre: data.idGrupoSemestre,
       idGeneracion: data.idGeneracion,
       idEspecialidad: data.idEspecialidad != 0 ? data.idEspecialidad : null,

@@ -6,7 +6,7 @@ import type { ResponseError } from "@/api/GeneralErrorInterface";
 
 export const EspecialidadesActions = () => {
 
-  const baseAPI = BaseAPI("especialidades");
+  const baseAPI = BaseAPI({ prefix: "especialidades" });
 
   const fetchEspecialidades = async (): Promise<ResponseEspecialidades> => {
     try {

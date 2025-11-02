@@ -18,7 +18,7 @@ import { BaseAPI } from "@/api/BaseAPI";
 export const UserActions = () => {
 
   const baseAPI = BaseAPI();
-  const baseUsersAPI = BaseAPI("usuarios");
+  const baseUsersAPI = BaseAPI({ prefix: "usuarios" });
 
   // obtiene los municipios
   const fetchMunicipios = async (): Promise<TopLevelMunicipios> => {

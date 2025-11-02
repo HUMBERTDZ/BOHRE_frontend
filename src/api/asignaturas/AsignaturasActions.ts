@@ -10,7 +10,7 @@ import type { ResponseError } from "../GeneralErrorInterface";
 
 export const AsignaturasActions = () => {
 
-  const baseAPI = BaseAPI("asignaturas");
+  const baseAPI = BaseAPI({ prefix: "asignaturas" });
 
   const fetchAsignaturas = async (page: number): Promise<ResponseAsignaturas> => {
     try {

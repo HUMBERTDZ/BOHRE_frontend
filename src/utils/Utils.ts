@@ -14,7 +14,6 @@ export const convertirAFormData = (user: UserSemiComplete): UsuarioFormData => {
     cedulaProfesional: user.cedulaProfesional || "",
     numeroExpediente: user.numeroExpediente || 0,
     nia: user.nia || "",
-    situacion: user.situacion?.toLowerCase() || "",
     idGeneracion: user.idGeneracion || 0,
     idGrupoSemestre: user.idGrupoSemestre || 0,
     idEspecialidad: user.idEspecialidad || 0,

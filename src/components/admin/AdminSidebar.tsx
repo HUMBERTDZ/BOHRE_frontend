@@ -33,10 +33,12 @@ import {
 } from "../ui/dropdown-menu";
 import React from "react";
 import { MenuItemsByRol } from "@/utils/MenuItemsByRol";
+import { useAuth } from "@/hooks/useAuth";
 
 export const AdminSidebar = () => {
   // Menu items.
   const items = MenuItemsByRol().admin;
+  const { user, logout } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -122,7 +124,7 @@ export const AdminSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> ADMINISTRADOR
+                  <User2 /> {user?.nombre} {user?.apellidoPaterno} {user?.apellidoMaterno.charAt(0)}.
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -130,7 +132,7 @@ export const AdminSidebar = () => {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem className="focus:bg-red-300">
+                <DropdownMenuItem className="focus:bg-red-300" onClick={logout}>
                   <span>Cerrar sesión</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
