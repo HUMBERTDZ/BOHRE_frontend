@@ -7,8 +7,9 @@ function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: 1,
-        refetchOnWindowFocus: false,
+        retry: 2,
+        refetchOnWindowFocus: true, // Cambiado a true para refetch al enfocar la ventana
+        refetchOnReconnect: true, // Cambiado a true para refetch al reconectar la red
       },
     },
   });

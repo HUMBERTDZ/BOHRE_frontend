@@ -36,7 +36,7 @@ export const AsignaturasPage = () => {
   const [page, setPage] = useState<number>(1);
 
   // obtener asignaturas
-  const { data, isLoading, } = getAsignaturas(page);
+  const { data, isLoading } = getAsignaturas(page);
 
 
   const handleCloseDialog = () => {

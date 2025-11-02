@@ -5,12 +5,14 @@ import type { Clase } from "@/api/gruposSemestres/interfaces/gruposSemestresExtr
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue, } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, BookOpen, Users, Loader2, Eye } from "lucide-react";
+import { AlertCircle, BookOpen, Users, Loader2, Eye, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { useUsers } from "@/hooks/users/useUsers";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { CalificacionesDialog } from "@/components/calificaciones/CalificacionesDialog";
+import { ButtonLink } from "@/components/ui/my/ButtonLink";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AsignaturasTableProps {
   clasesTroncoComun: Clase[];
@@ -22,11 +24,14 @@ interface AsignaturasTableProps {
     clasesSinDocente: number;
   };
   advertencia?: string;
+  onDownloadComunesExcel?: () => void;
 }
 
-export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio, estadisticas, advertencia,}: AsignaturasTableProps) {
+export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio, estadisticas, advertencia, onDownloadComunesExcel }: AsignaturasTableProps) {
   const { getDocentes, asignarDocente } = useUsers();
   const { data: docentesResponse, isLoading: loadingDocentes } = getDocentes();
+
+  const queryClient = useQueryClient();
 
   const handleAsignarDocente = (idClase: number, idDocente: string) => {
     const docenteId = idDocente === "sin-asignar" ? null : Number(idDocente);
@@ -40,6 +45,9 @@ export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio
               ? "Docente asignado correctamente" 
               : "Docente desasignado correctamente"
           );
+
+          // Invalidar queries relacionadas
+          queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
         },
         onError: (error: any) => {
           toast.error(
@@ -110,8 +118,12 @@ export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio
       {/* Tronco Común */}
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold">
+          <CardTitle className="text-xl font-semibold flex justify-between items-center">
             Tronco Común - Ciclo {anio}
+            <Button variant={"outline"} size={"sm"} onClick={onDownloadComunesExcel}>
+              <FileDown />
+              Descargar calificaciones
+            </Button>
           </CardTitle>
         </CardHeader>
         <div className="p-2">
@@ -131,8 +143,16 @@ export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio
           clases && clases.length > 0 ? (
             <Card key={especialidad} className="border-border/50">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">
+                <CardTitle className="text-xl font-semibold flex justify-between items-center">
                   Especialidad: {especialidad}
+
+                  <ButtonLink
+                    url={`/especialidades/detalles/${clases[0].idEspecialidad}`}
+                    button={{
+                      variant: "outline",
+                      size: "sm"
+                    }}
+                  />
                 </CardTitle>
               </CardHeader>
               <div className="p-2">

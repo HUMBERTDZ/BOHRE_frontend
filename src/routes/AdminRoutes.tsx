@@ -5,6 +5,8 @@ import { EspecialidadesDetailsPage } from "@/pages/admin/Especialidades/Califica
 import { EspecialidadesPage } from "@/pages/admin/Especialidades/EspecialidadesPage";
 import { GruposSemestresDetailsPage } from "@/pages/admin/GruposSemestres/GruposSemestresDetailsPage";
 import { GruposSemestresPage } from "@/pages/admin/GruposSemestres/GruposSemestresPage";
+import { GeneracionesDetailsPage } from "@/pages/admin/Periodos/generaciones/GeneracionesDetailsPage";
+import { PeriodosPage } from "@/pages/admin/Periodos/PeriodosPage";
 import { UserDetailsPage } from "@/pages/admin/Users/UserDetailsPage";
 import { UsersPage } from "@/pages/admin/Users/UsersPage";
 import { Route, Routes } from "react-router";
@@ -49,8 +51,10 @@ export const AdminRoutes = () => {
           <Route path="asignaturas/:idEspecialidad" element={<AsignaturasEspecialidades />} />
           <Route path="detalles/:idEspecialidad" element={<EspecialidadesDetailsPage />} />
         </Route>
-        <Route path="generaciones" element={<h1>Generaciones</h1>} />
-        <Route path="generaciones" element={<h1>Generaciones</h1>} />
+        <Route path="periodos" >
+          <Route index element={<PeriodosPage />} />
+          <Route path="generaciones/:idGeneracion" element={<GeneracionesDetailsPage />} />
+        </Route>
       </Route>
     </Routes>
   );

@@ -30,7 +30,8 @@ export const useUsers = () => {
     addUser,
     updateUser,
     getAllDocentes,
-    asignarDocenteAClase
+    asignarDocenteAClase,
+    asignarEspecialidadAlumno: asignarEspecialidadAlumn
   } = UserActions();
 
   /**
@@ -68,8 +69,6 @@ export const useUsers = () => {
       queryFn: () => fetchUsers(page),
       staleTime: 60 * 1000 * 10,
       placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
-      retry: false,
-      refetchOnWindowFocus: true,
     });
   };
 
@@ -113,7 +112,6 @@ export const useUsers = () => {
       queryKey: ["usuarios-eliminados", page],
       queryFn: () => fetchUsersDeleted(page),
       staleTime: 60 * 1000 * 20, // 20 minutos
-      retry: false,
     });
   };
 
@@ -127,7 +125,7 @@ export const useUsers = () => {
       queryKey: ["usuarios-eliminados", page],
       queryFn: () => fetchUsersDeleted(page),
       staleTime: 60 * 1000 * 20, // 20 minutos
-      retry: false,
+      placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
     });
   };
 
@@ -514,12 +512,13 @@ export const useUsers = () => {
   const asignarDocente = useMutation({
     mutationFn: ({ idClase, idDocente }: { idClase: number; idDocente: number | null }) => asignarDocenteAClase(idClase, idDocente),
     onSuccess: (data, variables) => {
-      // Invalidar queries relacionadas
-      queryClient.invalidateQueries({ queryKey: ["grupoSemestreExtra"] });
-      
       // Opcional: actualizar optimísticamente
       queryClient.setQueryData(["clase", variables.idClase], data);
     },
+  });
+
+  const asignarEspecialidadAlumno = useMutation({
+    mutationFn: ({ idAlumno, idEspecialidad }: { idAlumno: number; idEspecialidad: number | null }) => asignarEspecialidadAlumn(idAlumno, idEspecialidad),
   });
 
 
@@ -535,6 +534,7 @@ export const useUsers = () => {
     agregarUsuarioOptimistic,
     actualizarUsuarioOptimistic,
     getDocentes,
-    asignarDocente
+    asignarDocente,
+    asignarEspecialidadAlumno,
   };
 };

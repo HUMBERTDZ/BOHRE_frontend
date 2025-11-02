@@ -75,6 +75,6 @@ export const gruposSemestresActions = () => {
   return {
     getData,
     getExtraData,
-    generateClases
+    generateClases,
   };
 };

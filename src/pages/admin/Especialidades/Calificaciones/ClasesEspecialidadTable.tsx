@@ -25,6 +25,7 @@ import type { ClasesPorSemestreGrupo } from "@/api/calificaciones/interfaces/Cal
 import { useUsers } from "@/hooks/users/useUsers";
 import { CalificacionesDialog } from "@/components/calificaciones/CalificacionesDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ClasesEspecialidadTableProps {
   clasesPorSemestreGrupo: ClasesPorSemestreGrupo[];
@@ -38,6 +39,7 @@ export function ClasesEspecialidadTable({
 
   const { getDocentes, asignarDocente } = useUsers();
   const { data: docentesResponse, isLoading: loadingDocentes } = getDocentes();
+  const queryClient = useQueryClient();
 
   const handleAsignarDocente = (idClase: number, idDocente: string) => {
     const docenteId = idDocente === "sin-asignar" ? null : Number(idDocente);
@@ -51,6 +53,8 @@ export function ClasesEspecialidadTable({
               ? "Docente asignado correctamente"
               : "Docente desasignado correctamente"
           );
+          queryClient.invalidateQueries({ queryKey: ["especialidad"] });
+
         },
         onError: (error: any) => {
           toast.error(

@@ -8,6 +8,7 @@ import { ClasesEspecialidadTable } from "./ClasesEspecialidadTable";
 import { AlumnosEspecialidadTable } from "./AlumnosEspecialidadTable";
 import { PlanEstudiosCard } from "./PlanEstudiosCard";
 import { Header } from "@/components/ui/my/Header";
+import { DownloadsSecction } from "./DownloadsSecction";
 
 export const EspecialidadesDetailsPage = () => {
   const { idEspecialidad } = useParams();
@@ -65,6 +66,7 @@ export const EspecialidadesDetailsPage = () => {
               <TabsTrigger value="clases">Clases</TabsTrigger>
               <TabsTrigger value="alumnos">Alumnos</TabsTrigger>
               <TabsTrigger value="plan-estudios">Plan de Estudios</TabsTrigger>
+              <TabsTrigger value="descargas">Descargas</TabsTrigger>
             </TabsList>
 
             <TabsContent
@@ -95,6 +97,18 @@ export const EspecialidadesDetailsPage = () => {
             >
               <ScrollArea className="h-full w-full">
                 <PlanEstudiosCard planEstudios={planEstudios} />
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent
+              value="descargas"
+              className="flex-1 overflow-hidden"
+            >
+              <ScrollArea className="h-full w-full p-4">
+                <DownloadsSecction 
+                  clasesPorSemestreGrupo={clasesPorSemestreGrupo} 
+                  especialidad={especialidad} 
+                />
               </ScrollArea>
             </TabsContent>
           </Tabs>

@@ -40,7 +40,7 @@ const admin = [
     title: "Periodos",
     icon: CalendarRange,
     submenus: [
-      { title: "Administración", url: "generaciones" },
+      { title: "Administración", url: "periodos" },
     ],
   },
 ];

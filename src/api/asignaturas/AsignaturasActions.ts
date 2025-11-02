@@ -17,6 +17,7 @@ export const AsignaturasActions = () => {
       const response = await baseAPI.get<ResponseAsignaturas>(`/`, {
         params: { page },
       });
+      toast.success( response.data.message || "Asignaturas cargadas correctamente.");
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {

@@ -7,17 +7,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loading } from "@/components/ui/Loading";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/ui/my/Header";
+import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
 
 export const GruposSemestresDetailsPage = () => {
   const { idGrupoSemestre } = useParams();
 
   const { getGrupoSemestreDetails } = useGruposSemestres();
 
-  const { data: response, isFetching } = getGrupoSemestreDetails(
+  const { getExcelCalificaciones } = useEspecialidades();
+
+  const { data: response, isLoading } = getGrupoSemestreDetails(
     Number(idGrupoSemestre)
   );
 
-  if (isFetching) {
+  if (isLoading) {
     return <Loading message="Cargando detalles del grupo semestre..." />;
   }
 
@@ -70,13 +73,14 @@ export const GruposSemestresDetailsPage = () => {
                     }
                   }
                   advertencia={response.data.advertencia && "Vuelva atrás y cree las clases para el nuevo periodo."}
+                  onDownloadComunesExcel={() => getExcelCalificaciones(Number(idGrupoSemestre))}
                 />
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="alumnos" className="flex-1 overflow-hidden">
               <ScrollArea className="h-full w-full">
-                <AlumnosTable alumnos={response.data.general.alumnos} />
+                <AlumnosTable alumnos={response.data.general.alumnos} semestreNumero={response.data.general.semestre} />
               </ScrollArea>
             </TabsContent>
           </Tabs>

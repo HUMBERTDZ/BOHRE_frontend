@@ -262,6 +262,13 @@ export const UserActions = () => {
     return data;
   };
 
+  const asignarEspecialidadAlumno = async (idAlumno: number, idEspecialidad: number | null) => {
+    const { data } = await baseAPI.patch(`/alumno/asignarEspecialidad`,
+      { idAlumno, idEspecialidad }
+    );
+    return data;
+  }
+
   return {
     fetchUsers,
     fetchCompleteUserData,
@@ -275,5 +282,6 @@ export const UserActions = () => {
     updateUser,
     getAllDocentes,
     asignarDocenteAClase,
+    asignarEspecialidadAlumno,
   };
 };

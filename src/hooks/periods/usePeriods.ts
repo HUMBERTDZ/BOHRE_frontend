@@ -1,6 +1,6 @@
-import type { GeneracionesResponse, ResponseGrupoSemestres, ResponseSemestres, } from "@/api/periodos/actions/interfaces/PeriodosInterfaces";
+import type { GeneracionesResponse, GenerationsAlumnosResponse, ResponseGrupoSemestres, ResponseSemestres, ResponseSemestresRaw, } from "@/api/periodos/actions/interfaces/PeriodosInterfaces";
 import { PeriodosActions } from "@/api/periodos/actions/PeriodosActions";
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { useMutation, useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 export const usePeriods = () => {
   const {
@@ -8,6 +8,11 @@ export const usePeriods = () => {
     fetchCurrentGenerations,
     fetchAllGrupoSemestres,
     fetchSemestres,
+    fetchGeneracionesAlumnosCount,
+    fetchGenerationsWithAlumnos,
+    createGeneration,
+    fetchSemestresRaw,
+    updatePeriodsSemestres
   } = PeriodosActions();
 
   /**
@@ -54,10 +59,49 @@ export const usePeriods = () => {
     });
   };
 
+  const getGeneracionesAlumnosCount = (): UseQueryResult<GeneracionesResponse, Error> => {
+    return useQuery({
+      queryKey: ["generacionesAlumnosCount"],
+      queryFn: fetchGeneracionesAlumnosCount,
+      staleTime: 1000 * 60 * 30, // 30 minutos
+      placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
+    });
+  };
+
+  const getGenerationsWithAlumnos = (id: number): UseQueryResult<GenerationsAlumnosResponse, Error> => {
+    return useQuery({
+      queryKey: ["generationsWithAlumnos", id],
+      queryFn: () => fetchGenerationsWithAlumnos(id),
+      staleTime: 1000 * 60 * 30, // 30 minutos
+    });
+  };
+
+  const getCreateGeneration = useMutation({
+    mutationFn: ({ fechaIngreso, fechaEgreso }: { fechaIngreso: Date | string, fechaEgreso: Date | string }) => createGeneration({ fechaIngreso, fechaEgreso }),
+  });
+
+  const getSemestresRaw = (): UseQueryResult<ResponseSemestresRaw, Error> => {
+    return useQuery({
+      queryKey: ["semestresRaw"],
+      queryFn: fetchSemestresRaw,
+      staleTime: 1000 * 60 * 30, // 30 minutos
+    });
+  };
+
+  const getUpdatePeriodsSemestres = useMutation({
+    mutationFn: (data: any) => updatePeriodsSemestres(data),
+  });
+
+
   return {
     getAllGenerations,
     getAllGrupoSemestres,
     getCurrentGenerations,
     getSemestres,
+    getGeneracionesAlumnosCount,
+    getGenerationsWithAlumnos,
+    getCreateGeneration,
+    getSemestresRaw,
+    getUpdatePeriodsSemestres
   };
 };

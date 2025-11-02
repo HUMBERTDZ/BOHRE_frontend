@@ -2,8 +2,10 @@ import type { User } from "@/api/users/interfaces/UserInterface";
 import type { ColumnDef, Column, SortDirection } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, MoreHorizontal, Trash, Undo } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, } from "../ui/dropdown-menu";
+import { ChevronDown, ChevronUp, Trash, Undo } from "lucide-react";
+import { DropdownMenuItem, } from "../ui/dropdown-menu";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ButtonLink } from "../ui/my/ButtonLink";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -108,15 +110,7 @@ export const ColumnsTableDeletedUsers = ( onDeleteForce: (usuario: User) => void
       cell: ({ row }) => {
         const { original } = row;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+          <ActionOptionsMenu>
               <DropdownMenuItem onClick={() => onRecover(original)} className="focus:bg-green-100 focus:text-green-500 text-green-500 ">
                 <Undo className="text-current" />
                 Recuperar
@@ -125,8 +119,10 @@ export const ColumnsTableDeletedUsers = ( onDeleteForce: (usuario: User) => void
                 <Trash className="text-current" />
                  Eliminar
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <DropdownMenuItem asChild>
+                <ButtonLink url={`${original.rol.toLowerCase()}/${original.id}`} text="Ver detalles" />
+              </DropdownMenuItem>
+          </ActionOptionsMenu>
         );
       },
     },

@@ -40,7 +40,7 @@ export const UsersPage = () => {
   const [page, setPage] = useState<number>(1);
   
   // obtener los usuarios
-  const { data: userData, isFetching } = getUsers(page);
+  const { data: userData, isLoading } = getUsers(page);
   
   
   useEffect(() => {
@@ -76,7 +76,7 @@ export const UsersPage = () => {
   };
 
 
-  if (isFetching) {
+  if (isLoading) {
     return <Loading message="Cargando usuarios..." />;
   }
 
@@ -103,11 +103,11 @@ export const UsersPage = () => {
         />
 
         {/* tabla de usuarios */}
-        <DataTable columns={columns} data={userData?.data.data || []}  
+        <DataTable columns={columns} data={userData?.data?.data || []}  
           pagination={{
-              currentPage: userData?.data.current_page || 1,
-              lastPage: userData?.data.last_page || 1,
-              total: userData?.data.total || 0,
+              currentPage: userData?.data?.current_page || 1,
+              lastPage: userData?.data?.last_page || 1,
+              total: userData?.data?.total || 0,
               onPageChange: setPage,
             }}
           filterOptions={{ nombre: "Nombre", columnName: "nombre" }}

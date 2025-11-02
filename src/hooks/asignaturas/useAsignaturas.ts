@@ -19,6 +19,7 @@ export const useAsignaturas = () => {
       queryKey: ["asignaturas", page],
       queryFn: () => fetchAsignaturas(page),
       staleTime: 1000 * 60 * 30, // 30 minutos
+      placeholderData: (previousData) => previousData, // Mantiene datos previos mientras carga
     });
   };
 

@@ -7,7 +7,7 @@ export const useEspecialidades = () => {
   const { fetchEspecialidades, createEspecialidad, updateEspecialidad, getAsignaturasByEspecialidad } =
     EspecialidadesActions();
 
-    const { getById } = CalificacionesActions();
+    const { getById, fetchExcelCalificaciones } = CalificacionesActions();
 
   const queryClient = useQueryClient();
 
@@ -50,7 +50,15 @@ export const useEspecialidades = () => {
     });
   };
 
+  const getExcelCalificaciones = (idGrupoSemestre: number) => {
+    return fetchExcelCalificaciones(`/clases/${idGrupoSemestre}/download/calificaciones/`);
+  };
+
+  const getExcelCalificacionesEspecialidad = (idEspecialidad: number, numeroSemestre: number) => {
+    return fetchExcelCalificaciones(`/clases/${numeroSemestre}/${idEspecialidad}/download/calificacionesEsp`);
+  };
+
   
 
-  return { getEspecialidades, getAsignaturasByEspecialidadId, addEspecialidad, getUpdateEspecialidad, getEspecialidadById };
+  return { getEspecialidades, getAsignaturasByEspecialidadId, addEspecialidad, getUpdateEspecialidad, getEspecialidadById, getExcelCalificaciones, getExcelCalificacionesEspecialidad };
 };
