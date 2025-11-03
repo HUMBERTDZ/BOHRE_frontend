@@ -37,7 +37,7 @@ export const LoginForm: FC = () => {
       case 'ADMIN':
         return '/inicio';
       case 'DOCENTE':
-        return '/mis-clases';
+        return '/docencia';
       case 'ALUMNO':
         return '/mis-clases';
       default:

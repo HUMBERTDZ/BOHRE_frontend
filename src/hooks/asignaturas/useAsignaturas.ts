@@ -5,6 +5,8 @@ import type {
   ResponseAsignaturaCreateOrUpdate,
   ResponseAsignaturas,
 } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
+import { docentesMateriasActions } from "@/api/docentesMaterias/actions/docentesMateriasActions";
+import type { MateriasDocenteResponse } from "@/api/docentesMaterias/interfaces/docentesMateriasInterfaces";
 import { useMutation, useQuery, useQueryClient, type UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -13,6 +15,7 @@ const ITEMS_PER_PAGE = 15;
 export const useAsignaturas = () => {
   const queryClient = useQueryClient();
   const { fetchAsignaturas, fetchAsignatura, createAsignatura, updateAsignatura, deleteAsignatura } = AsignaturasActions();
+  const { fetchDocenteMaterias } = docentesMateriasActions();
 
   const getAsignaturas = (page: number): UseQueryResult<ResponseAsignaturas, Error> => {
     return useQuery({
@@ -299,9 +302,19 @@ export const useAsignaturas = () => {
     },
   });
 
+
+  const getAsignaturaByDocente = ( docenteId: number ): UseQueryResult<MateriasDocenteResponse, Error> => {
+    return useQuery({
+      queryKey: ["docenteMaterias", docenteId],
+      queryFn: () => fetchDocenteMaterias(docenteId),
+      staleTime: 1000 * 60 * 5, // 5 minutos
+    });
+  };
+
   return {
     getAsignaturas,
     getAsignatura,
+    getAsignaturaByDocente,
     prefetchAsignatura,
     addAsignatura: addAsignaturaMutation.mutate,
     addAsignaturaAsync: addAsignaturaMutation.mutateAsync,

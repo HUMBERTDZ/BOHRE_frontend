@@ -1,6 +1,6 @@
 import { AuthPage } from "@/auth/AuthPage";
 import Unauthorized from "@/pages/Unauthorized";
-import { AdminRoutes } from "@/routes/AdminRoutes";
+import { SystemRoutes } from "@/routes/SystemRoutes";
 import type { FC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router";
 
@@ -11,7 +11,7 @@ export const Router: FC = () => {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
-        <Route path="/*" element={<AdminRoutes />} />
+        <Route path="/*" element={<SystemRoutes />} />
         {/* <Route path="/*" element={<Navigate to="/auth" />} /> */}
       </Routes>
     </BrowserRouter>

@@ -47,3 +47,40 @@ export interface EstadisticasClase {
   momento2Promedio: number;
   momento3Promedio: number;
 }
+
+export interface ResponseCalificacionesByClase {
+  success: boolean;
+  data:    Data;
+}
+
+export interface Data {
+  clase:        Clase;
+  alumnos:      Alumno[];
+  estadisticas: Estadisticas;
+}
+
+export interface Alumno {
+  idAlumno: number;
+  nia:      string;
+  nombre:   string;
+  momento1: number;
+  momento2: number;
+  momento3: number;
+  promedio: number;
+}
+
+export interface Clase {
+  id:           number;
+  asignatura:   string;
+  grupo:        string;
+  semestre:     number;
+  especialidad: null;
+  anio:         number;
+}
+
+export interface Estadisticas {
+  totalAlumnos:  number;
+  promedioGrupo: number;
+  aprobados:     number;
+  reprobados:    number;
+}

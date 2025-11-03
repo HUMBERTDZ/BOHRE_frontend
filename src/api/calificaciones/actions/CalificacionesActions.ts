@@ -1,5 +1,5 @@
 import { BaseAPI } from "@/api/BaseAPI";
-import type { ResponseCalificaciones } from "../interfaces/CalificacionesInterface";
+import type { ResponseCalificaciones, ResponseCalificacionesByClase } from "../interfaces/CalificacionesInterface";
 import type { ResponseEspecialidadDetalle } from "../interfaces/CalificacionesByEspecialidad";
 import type { ResponseError } from "@/api/GeneralErrorInterface";
 import { toast } from "sonner";
@@ -69,11 +69,48 @@ export const CalificacionesActions = () => {
     }
   };
 
+
+  const fetchCalificacionesByClase = async ( idClase: number ): Promise<ResponseCalificacionesByClase> => {
+    try {
+      const response = await baseAPI.get<ResponseCalificacionesByClase>(`/clases/${idClase}/detalle`);
+      toast.success("Calificaciones obtenidas con éxito.");
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError<ResponseError>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+      throw new Error("Ocurrió un error inesperado.")
+    }
+  }
+
+  const postCalificaciones = async ( idClase: number, calificaciones: Array<{ idAlumno: number; momento1: number; momento2: number; momento3: number }> ) => {
+    try {
+      const response = await baseAPI.put(`/clases/${idClase}/calificaciones`,  { calificaciones } );
+      toast.success("Calificaciones actualizadas con éxito.");
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError<ResponseError>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+      throw new Error("Ocurrió un error inesperado.");
+    }
+  };
+
   return {
     getByClase,
     update,
     getById,
     getCalificacionesByEspecialidad,
-    fetchExcelCalificaciones
+    fetchExcelCalificaciones,
+    fetchCalificacionesByClase,
+    postCalificaciones,
   };
 };
