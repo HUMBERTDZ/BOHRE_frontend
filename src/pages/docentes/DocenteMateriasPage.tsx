@@ -47,7 +47,7 @@ export const DocenteMateriasPage = () => {
     <div className="p-4 bg-gray-100">
       <Header
         title={`Materias de ${data.docente.nombre}`}
-        description={`Bienvenida ${data.docente.nombre}, estas son las materias que impartes este periodo escolar.`}
+        description={`Bienvenid@ ${data.docente.nombre}, estas son las materias que impartes este periodo escolar.`}
         paths={[]}
         rootPath={false}
       />
