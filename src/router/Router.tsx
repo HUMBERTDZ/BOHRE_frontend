@@ -1,4 +1,5 @@
 import { AuthPage } from "@/auth/AuthPage";
+import { LandingPage } from "@/pages/LandingPage";
 import Unauthorized from "@/pages/Unauthorized";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { SystemRoutes } from "@/routes/SystemRoutes";
@@ -10,6 +11,7 @@ export const Router: FC = () => {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route index element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 

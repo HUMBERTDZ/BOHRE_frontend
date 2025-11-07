@@ -15,7 +15,7 @@ import { useAsignaturas } from "@/hooks/asignaturas/useAsignaturas";
 import { CardEstadistica } from "@/components/ui/my/CardEstadistica";
 import { MateriaCard } from "@/components/ui/my/MateriaCard";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { ActionOptionsMenu } from "@/components/ui/my/ActionOptionsmenu";
+import { ActionOptionsMenu } from "@/components/ui/my/ActionOptionsMenu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export const DocenteMateriasPage = () => {

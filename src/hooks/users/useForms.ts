@@ -1,9 +1,9 @@
 import type { UsuarioFormData } from "@/components/admin/UsuarioFormInterface";
 import { useState } from "react";
-import { useUsers } from "./useUsers";
 import { toast } from "sonner";
 import type { UserSemiComplete } from "@/api/users/interfaces/UserInterface";
 import { FilterDataFormByRol } from "@/utils/FilterDataFormByRol";
+import { useUsersMutations } from "./useUsersMutations";
 
 
 interface props {
@@ -26,7 +26,7 @@ export const useForms = ({ update, reset, setStateDialogOpen }: props) => {
   const [valoresIniciales, setValoresIniciales] =
     useState<UsuarioFormData | null>(null);
 
-  const { agregarUsuarioOptimistic, actualizarUsuarioOptimistic } = useUsers();
+  const { agregarUsuarioOptimistic, actualizarUsuarioOptimistic } = useUsersMutations();
 
   /**
    * Función para detectar cambios en el formulario
@@ -91,8 +91,8 @@ export const useForms = ({ update, reset, setStateDialogOpen }: props) => {
       const camposAlumno = ["nia", "situacion"] as const;
 
       camposAlumno.forEach((campo) => {
-        const valorInicial = valoresIniciales[campo] as string;
-        const valorActual = datosActuales[campo] as string;
+        const valorInicial = campo in valoresIniciales ? valoresIniciales[campo] as string : '';
+        const valorActual = campo in datosActuales ? datosActuales[campo] as string : '';
 
         if (valorActual?.trim() !== valorInicial?.trim()) {
           cambios[campo] = valorActual;

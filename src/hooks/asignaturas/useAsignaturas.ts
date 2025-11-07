@@ -134,7 +134,7 @@ export const useAsignaturas = () => {
 
       return { previousPages, tempId: tempAsignatura.idAsignatura };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousPages) {
         context.previousPages.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
@@ -142,7 +142,7 @@ export const useAsignaturas = () => {
       }
       toast.error("Error al crear la asignatura");
     },
-    onSuccess: (response, variables, context) => {
+    onSuccess: (response, _variables, context) => {
       // Reemplazar el item temporal con el real del servidor
       const queries = queryClient.getQueriesData<ResponseAsignaturas>({
         queryKey: ["asignaturas"],
@@ -214,7 +214,7 @@ export const useAsignaturas = () => {
 
       return { previousPages };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousPages) {
         context.previousPages.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
@@ -288,7 +288,7 @@ export const useAsignaturas = () => {
 
       return { previousPages };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousPages) {
         context.previousPages.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);

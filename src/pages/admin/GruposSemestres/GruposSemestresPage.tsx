@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/ui/my/DataTable";
 import { ColumnsTableGruposSemestres } from "@/components/grupoSemestres/ColumnsTableGruposSemestres";
 import { Loading } from "@/components/ui/Loading";
-import { useGruposSemestres } from "@/hooks/gruposSemestres/useGruposSemestres";
+import { useClases } from "@/hooks/clases/useClases";
 import { useState } from "react";
 import { Header } from "@/components/ui/my/Header";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,10 @@ import { AlertDialogActions } from "@/components/users/AlertDialogActions";
 
 export const GruposSemestresPage = () => {
   // hook de asignaturas
-  const { getGruposSemestres, generateClases } = useGruposSemestres();
+  const { getGruposSemestres, generateClases } = useClases();
 
   // columnas de la tabla
-  const columns = ColumnsTableGruposSemestres({ onPrefetch: (id: number) => {} });
+  const columns = ColumnsTableGruposSemestres();
 
   const [ open, setOpen ] = useState<boolean>(false);
 

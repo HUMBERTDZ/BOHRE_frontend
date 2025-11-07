@@ -26,6 +26,7 @@ import { useUsers } from "@/hooks/users/useUsers";
 import { CalificacionesDialog } from "@/components/calificaciones/CalificacionesDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQueryClient } from "@tanstack/react-query";
+import { useClases } from "@/hooks/clases/useClases";
 
 interface ClasesEspecialidadTableProps {
   clasesPorSemestreGrupo: ClasesPorSemestreGrupo[];
@@ -37,7 +38,8 @@ export function ClasesEspecialidadTable({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedClaseId, setSelectedClaseId] = useState<number | null>(null);
 
-  const { getDocentes, asignarDocente } = useUsers();
+  const { getDocentes } = useUsers();
+  const { asignarDocente } = useClases();
   const { data: docentesResponse, isLoading: loadingDocentes } = getDocentes();
   const queryClient = useQueryClient();
 
@@ -178,6 +180,7 @@ export function ClasesEspecialidadTable({
                                   Sin asignar
                                 </span>
                               </SelectItem>
+                              
                               {loadingDocentes ? (
                                 <SelectItem value="loading" disabled>
                                   Cargando docentes...
@@ -221,3 +224,5 @@ export function ClasesEspecialidadTable({
     </>
   );
 }
+
+// todo: se puede reutilizar el componente para asignar docentes?

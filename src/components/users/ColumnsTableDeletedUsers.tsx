@@ -4,7 +4,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, Trash, Undo } from "lucide-react";
 import { DropdownMenuItem, } from "../ui/dropdown-menu";
-import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsMenu";
 import { ButtonLink } from "../ui/my/ButtonLink";
 
 // pequeño componente para definir el icono

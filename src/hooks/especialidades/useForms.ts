@@ -1,4 +1,3 @@
-import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useEspecialidades } from "./useEspecialidades";

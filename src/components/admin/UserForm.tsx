@@ -4,7 +4,6 @@ import { useForm, Controller } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { useUsers } from "@/hooks/users/useUsers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "../ui/select";
 import { DatePicker } from "../ui/DatePicker";
 import type { UsuarioFormData } from "./UsuarioFormInterface";
@@ -14,6 +13,7 @@ import { usePeriods } from "@/hooks/periods/usePeriods";
 import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
 import { convertirAFormData } from "@/utils/Utils";
 import { useForms } from "@/hooks/users/useForms";
+import { useDireccion } from "@/hooks/direccion/useDireccion";
 
 interface props {
   stateDialogOpen: boolean;
@@ -28,7 +28,7 @@ interface props {
 export const UserForm: FC<props> = ({ stateDialogOpen, setStateDialogOpen, update, }) => {
 
   // obteniendo funciones desde el custom hooks
-  const { getMunicipios, getLocalidades, } = useUsers();
+  const { getMunicipios, getLocalidades, } = useDireccion();
   const { getCurrentGenerations, getAllGrupoSemestres } = usePeriods();
   const { getEspecialidades } = useEspecialidades();
 

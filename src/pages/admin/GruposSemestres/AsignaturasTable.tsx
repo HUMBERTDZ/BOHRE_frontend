@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Clase } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface";
+import type { Clase } from "@/api/clases/interfaces/gruposSemestresExtraInterface";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue, } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -13,6 +13,7 @@ import { useState } from "react";
 import { CalificacionesDialog } from "@/components/calificaciones/CalificacionesDialog";
 import { ButtonLink } from "@/components/ui/my/ButtonLink";
 import { useQueryClient } from "@tanstack/react-query";
+import { useClases } from "@/hooks/clases/useClases";
 
 interface AsignaturasTableProps {
   clasesTroncoComun: Clase[];
@@ -28,7 +29,8 @@ interface AsignaturasTableProps {
 }
 
 export function AsignaturasTable({ clasesTroncoComun, clasesEspecialidades, anio, estadisticas, advertencia, onDownloadComunesExcel }: AsignaturasTableProps) {
-  const { getDocentes, asignarDocente } = useUsers();
+  const { getDocentes, } = useUsers();
+  const { asignarDocente } = useClases();
   const { data: docentesResponse, isLoading: loadingDocentes } = getDocentes();
 
   const queryClient = useQueryClient();

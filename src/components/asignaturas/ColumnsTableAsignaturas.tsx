@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Pen, Trash, } from "lucide-react";
 import { DropdownMenuItem, } from "../ui/dropdown-menu";
 import type { Asignatura } from "@/api/asignaturas/interfaces/AsignaturasInterfaces";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsMenu";
 
 // pequeño componente para definir el icono
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {

@@ -36,3 +36,16 @@ export interface Link {
   label: string;
   active: boolean;
 }
+
+
+export interface ResponseAsignarDocente {
+  message: string;
+  data:    DocenteAsignado;
+}
+
+export interface DocenteAsignado {
+  idDocente:     number;
+  nombreDocente: string;
+}
+
+

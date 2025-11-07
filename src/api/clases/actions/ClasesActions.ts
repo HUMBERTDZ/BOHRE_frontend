@@ -1,22 +1,19 @@
 import { BaseAPI } from "@/api/BaseAPI";
-import type { GruposSemestresResponse } from "../interfaces/gruposSemestresInterfaces";
+import type { GruposSemestresResponse, ResponseAsignarDocente } from "../interfaces/clasesInterfaces";
 import axios from "axios";
 import type { ResponseError } from "@/api/GeneralErrorInterface";
 import { toast } from "sonner";
 import type { ResponseAlumnosGrupos } from "../interfaces/gruposSemestresExtraInterface";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const gruposSemestresActions = () => {
-
-  const baseAPI = BaseAPI();
-
+export const ClasesActions = () => {
+  
   const queryClient = useQueryClient();
+  const baseAPI = BaseAPI({ prefix: "clases" });
+
   const getData = async (page: number): Promise<GruposSemestresResponse> => {
     try {
-      const response = await baseAPI.get<GruposSemestresResponse>(
-        "/gruposemestres/details",
-        { params: { page } }
-      );
+      const response = await baseAPI.get<GruposSemestresResponse>("/details",{ params: { page } });
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -33,9 +30,9 @@ export const gruposSemestresActions = () => {
     }
   };
 
-  const getExtraData = async ( idGrupoSemestre: number ): Promise<ResponseAlumnosGrupos> => {
+  const getExtraData = async (idGrupoSemestre: number): Promise<ResponseAlumnosGrupos> => {
     try {
-      const response = await baseAPI.get<ResponseAlumnosGrupos>(`/gruposemestres/details/${idGrupoSemestre}`);
+      const response = await baseAPI.get<ResponseAlumnosGrupos>(`/details/${idGrupoSemestre}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -52,11 +49,11 @@ export const gruposSemestresActions = () => {
     }
   };
 
-  const generateClases = async (): Promise<void> => {
+  const getGenerateClases = async (): Promise<void> => {
     try {
-      await baseAPI.post("/clases/generar");
+      await baseAPI.post("/generar");
       await queryClient.invalidateQueries({ queryKey: ["gruposSemestres"] });
-      await queryClient.invalidateQueries({ queryKey: ["usuarios-eliminados"] });
+      await queryClient.invalidateQueries({queryKey: ["usuarios-eliminados"],});
       toast.success("Clases generadas correctamente.");
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -70,11 +67,19 @@ export const gruposSemestresActions = () => {
       // Error desconocido
       throw new Error("Ocurrió un error inesperado.");
     }
-  }
+  };
+
+  const getAsignarDocente = async (idClase: number, idDocente: number | null): Promise<ResponseAsignarDocente> => {
+    const { data } = await baseAPI.patch(`/${idClase}/asignar-docente`,
+      { idDocente }
+    );
+    return data;
+  };
 
   return {
     getData,
     getExtraData,
-    generateClases,
+    getGenerateClases,
+    getAsignarDocente,
   };
 };

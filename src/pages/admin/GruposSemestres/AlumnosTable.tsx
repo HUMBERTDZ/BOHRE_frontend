@@ -1,14 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Alumno } from "@/api/gruposSemestres/interfaces/gruposSemestresExtraInterface";
+import type { Alumno } from "@/api/clases/interfaces/gruposSemestresExtraInterface";
 import { ButtonLink } from "@/components/ui/my/ButtonLink";
 import { useMemo, useState } from "react";
-import { AsignarEspecialidad } from "./AsignarEspecialidad";
 import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
 import { AlertDialogActions } from "@/components/users/AlertDialogActions";
-import { useUsers } from "@/hooks/users/useUsers";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAlumnos } from "@/hooks/alumno/useAlumnos";
+import { AsignarEspecialidad } from "./AsignarEspecialidad";
 
 interface AlumnosTableProps {
   alumnos: Alumno[];
@@ -50,7 +50,7 @@ export function AlumnosTable({ alumnos, semestreNumero = 0 }: AlumnosTableProps)
   }, [alumnos]);
 
   const { getEspecialidades } = useEspecialidades();
-  const { asignarEspecialidadAlumno } = useUsers();
+  const { asignarEspecialidadAlumno } = useAlumnos();
   const queryClient = useQueryClient();
 
   const { data: especialidades } = getEspecialidades();

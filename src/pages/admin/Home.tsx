@@ -18,7 +18,9 @@ import { useDashboard } from "../../hooks/dashboard/useDashboard";
 export const Home = () => {
   const { getDashboardData } = useDashboard();
 
-  const { data, isLoading } = getDashboardData();
+  const { data: dataDashboard, isLoading } = getDashboardData();
+
+  const data = dataDashboard?.data;
 
   if (isLoading) {
     return (
@@ -190,7 +192,7 @@ export const Home = () => {
                     label
                   >
                     {data.graficos.alumnosPorEspecialidad.map(
-                      (entry, index) => (
+                      (_entry, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}

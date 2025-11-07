@@ -5,7 +5,7 @@ import { useAlumnos } from "@/hooks/alumno/useAlumnos";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { Download, FileText, CheckCircle, AlertCircle } from "lucide-react";
-import { ActionOptionsMenu, } from "@/components/ui/my/ActionOptionsmenu";
+import { ActionOptionsMenu, } from "@/components/ui/my/ActionOptionsMenu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export const AlumnoPage = () => {

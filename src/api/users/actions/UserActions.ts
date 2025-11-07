@@ -1,7 +1,5 @@
 // actions/UserActions.ts
 import type { UsuarioFormData } from "@/components/admin/UsuarioFormInterface";
-import type { TopLevelLocalidades } from "../interfaces/Localidades";
-import type { TopLevelMunicipios } from "../interfaces/Municipios";
 import type {
   ResponseAddUser,
   ResponseDocentes,
@@ -17,22 +15,7 @@ import { BaseAPI } from "@/api/BaseAPI";
 
 export const UserActions = () => {
 
-  const baseAPI = BaseAPI();
   const baseUsersAPI = BaseAPI({ prefix: "usuarios" });
-
-  // obtiene los municipios
-  const fetchMunicipios = async (): Promise<TopLevelMunicipios> => {
-    const response = await baseAPI.get(`/municipios`);
-    return response.data;
-  };
-
-  // obtiene las localidades por municipio
-  const fetchLocalidades = async (
-    municipioId: number
-  ): Promise<TopLevelLocalidades> => {
-    const response = await baseAPI.get(`/localidades/${municipioId}`);
-    return response.data;
-  };
 
   /**
    * obtiene a los usuarios con paginación
@@ -255,48 +238,16 @@ export const UserActions = () => {
     return data;
   };
 
-  const asignarDocenteAClase = async (idClase: number, idDocente: number | null) => {
-    const { data } = await baseAPI.patch(`/clases/${idClase}/asignar-docente`,
-      { idDocente }
-    );
-    return data;
-  };
-
-  const asignarEspecialidadAlumno = async (idAlumno: number, idEspecialidad: number | null) => {
-    try {
-      
-      const { data } = await baseAPI.patch(`/alumno/asignarEspecialidad`,
-        { idAlumno, idEspecialidad }
-      );
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError<ResponseError>(error)) {
-        if (error.response) {
-          toast.error(error.response.data.message || "Error del servidor.");
-        } else if (error.request) {
-          // Error de red (no hubo respuesta)
-          toast.error("No se pudo conectar con el servidor.");
-        } 
-      }
-
-      // Error desconocido
-      throw new Error("Ocurrió un error inesperado.");
-    }
-  }
 
   return {
     fetchUsers,
     fetchCompleteUserData,
     fetchUsersDeleted,
-    fetchMunicipios,
-    fetchLocalidades,
     addUser,
     deleteUser,
     forceDeleteUser,
     restoreUser,
     updateUser,
     getAllDocentes,
-    asignarDocenteAClase,
-    asignarEspecialidadAlumno,
   };
 };

@@ -5,12 +5,11 @@ import type { ResponseError } from "@/api/GeneralErrorInterface";
 import { toast } from "sonner";
 
 export const AlumnoActions = () => {
+  const baseUAPI = BaseAPI({ prefix: "usuarios" });
   const baseAPI = BaseAPI({ prefix: "alumnos" });
   const fetchAlumnoSemestres = async (idAlumno: number) => {
     try {
-      const response = await baseAPI.get<AlumnoSemestreResponse>(
-        `/${idAlumno}/semestres`
-      );
+      const response = await baseAPI.get<AlumnoSemestreResponse>(`/${idAlumno}/semestres`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {
@@ -78,8 +77,31 @@ export const AlumnoActions = () => {
     }
   };
 
+  const asignarEspecialidadAlumno = async ( idAlumno: number, idEspecialidad: number | null) => {
+    try {
+      const { data } = await baseUAPI.patch(`/alumnos/asignarEspecialidad`, {
+        idAlumno,
+        idEspecialidad,
+      });
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError<ResponseError>(error)) {
+        if (error.response) {
+          toast.error(error.response.data.message || "Error del servidor.");
+        } else if (error.request) {
+          // Error de red (no hubo respuesta)
+          toast.error("No se pudo conectar con el servidor.");
+        }
+      }
+
+      // Error desconocido
+      throw new Error("Ocurrió un error inesperado.");
+    }
+  };
+
   return {
     fetchAlumnoSemestres,
     fetchBoleta,
+    asignarEspecialidadAlumno,
   };
 };

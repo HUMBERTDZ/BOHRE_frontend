@@ -1,4 +1,4 @@
-import { useGruposSemestres } from "@/hooks/gruposSemestres/useGruposSemestres";
+import { useClases } from "@/hooks/clases/useClases";
 import { AlumnosTable } from "./AlumnosTable";
 import { GrupoInfoCard } from "./GrupoInfoCard";
 import { useParams } from "react-router";
@@ -8,17 +8,16 @@ import { Loading } from "@/components/ui/Loading";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/ui/my/Header";
 import { useEspecialidades } from "@/hooks/especialidades/useEspecialidades";
+import type { Clase } from "@/api/clases/interfaces/gruposSemestresExtraInterface";
 
 export const GruposSemestresDetailsPage = () => {
   const { idGrupoSemestre } = useParams();
 
-  const { getGrupoSemestreDetails } = useGruposSemestres();
+  const { getGrupoSemestreDetails } = useClases();
 
   const { getExcelCalificaciones } = useEspecialidades();
 
-  const { data: response, isLoading } = getGrupoSemestreDetails(
-    Number(idGrupoSemestre)
-  );
+  const { data: response, isLoading } = getGrupoSemestreDetails(Number(idGrupoSemestre));
 
   if (isLoading) {
     return <Loading message="Cargando detalles del grupo semestre..." />;
@@ -62,7 +61,7 @@ export const GruposSemestresDetailsPage = () => {
                 <AsignaturasTable
                   clasesTroncoComun={response.data.clases?.troncoComun || []}
                   clasesEspecialidades={
-                    response.data.clases?.especialidades || {}
+                    response.data.clases?.especialidades as Record<string, Clase[]> || {}
                   }
                   anio={response.data.anio || new Date().getFullYear()}
                   estadisticas={

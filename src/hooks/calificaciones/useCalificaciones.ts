@@ -25,7 +25,7 @@ export const useCalificaciones = () => {
       idCalificacion: number;
       momentos: { momento1: number; momento2: number; momento3: number };
     }) => update(idCalificacion, momentos),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, _variables) => {
       // Invalidar la query de calificaciones
       queryClient.invalidateQueries({ queryKey: ["calificaciones"] });
     },

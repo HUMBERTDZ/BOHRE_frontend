@@ -2,13 +2,14 @@ import { BaseAPI } from "@/api/BaseAPI";
 import type { ResponseError } from "@/api/GeneralErrorInterface";
 import axios from "axios";
 import { toast } from "sonner";
+import type { DashboardResponse } from "../interfaces/dashboardInterfaces";
 
 export const dashBoardActions = () => {
   const baseAPI = BaseAPI({ prefix: "dashboard" });
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (): Promise<DashboardResponse> => {
     try {
-      const response = await baseAPI.get("/estadisticas");
+      const response = await baseAPI.get<DashboardResponse>("/estadisticas");
       return response.data;
     } catch (error) {
       if (axios.isAxiosError<ResponseError>(error)) {

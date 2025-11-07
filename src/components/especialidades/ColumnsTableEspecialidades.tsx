@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, Pen, } from "lucide-react";
 import { DropdownMenuItem, } from "../ui/dropdown-menu";
 import type { Especialidad } from "@/api/especialidades/interfaces/EspecialidadesInterfaces";
-import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsMenu";
 import { ButtonLink } from "../ui/my/ButtonLink";
 
 

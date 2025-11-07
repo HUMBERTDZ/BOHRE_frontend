@@ -17,8 +17,6 @@ export const convertirAFormData = (user: UserSemiComplete): UsuarioFormData => {
     idGeneracion: user.idGeneracion || 0,
     idGrupoSemestre: user.idGrupoSemestre || 0,
     idEspecialidad: user.idEspecialidad || 0,
+    situacion: user.situacion ?? "", // ✅ Asegura siempre string
   };
 };
-
-
-

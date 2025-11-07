@@ -3,8 +3,8 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp, } from "lucide-react";
 import { DropdownMenuItem, } from "../ui/dropdown-menu";
-import type { Datum } from "@/api/gruposSemestres/interfaces/gruposSemestresInterfaces";
-import { ActionOptionsMenu } from "../ui/my/ActionOptionsmenu";
+import type { Datum } from "@/api/clases/interfaces/clasesInterfaces";
+import { ActionOptionsMenu } from "../ui/my/ActionOptionsMenu";
 import { ButtonLink } from "../ui/my/ButtonLink";
 
 
@@ -39,13 +39,8 @@ const SortButton = ({
 };
 
 
-interface props {
-  // onDelete: (id: Asignatura) => void;
-  onPrefetch: (id: number) => void;
-}
-
 // Función que crea las columnas (sin hooks)
-export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Datum>[] => {
+export const ColumnsTableGruposSemestres = (): ColumnDef<Datum>[] => {
   return [
     {
       id: "select",
@@ -121,7 +116,7 @@ export const ColumnsTableGruposSemestres = ({ onPrefetch }: props): ColumnDef<Da
         const { original } = row;
         return (
           <ActionOptionsMenu>
-              <DropdownMenuItem onMouseEnter={() => { onPrefetch(original.idGrupoSemestre) }} asChild>
+              <DropdownMenuItem asChild>
                 <ButtonLink url={`detalles/${original.idGrupoSemestre}`} />
               </DropdownMenuItem>
           </ActionOptionsMenu>
