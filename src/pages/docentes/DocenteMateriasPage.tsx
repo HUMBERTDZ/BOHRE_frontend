@@ -19,11 +19,11 @@ import { ActionOptionsMenu } from "@/components/ui/my/ActionOptionsmenu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export const DocenteMateriasPage = () => {
-  const { user, logout } = useAuth();
+  const { userCompleteData, logout } = useAuth();
 
   const { getAsignaturaByDocente } = useAsignaturas();
 
-  const { data: info, isLoading } = getAsignaturaByDocente(user?.idPersona!);
+  const { data: info, isLoading } = getAsignaturaByDocente(userCompleteData?.user.idPersona!);
 
   const data = info?.data;
 

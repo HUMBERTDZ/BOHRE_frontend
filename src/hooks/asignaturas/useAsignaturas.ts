@@ -308,6 +308,7 @@ export const useAsignaturas = () => {
       queryKey: ["docenteMaterias", docenteId],
       queryFn: () => fetchDocenteMaterias(docenteId),
       staleTime: 1000 * 60 * 5, // 5 minutos
+      enabled: !!docenteId,
     });
   };
 

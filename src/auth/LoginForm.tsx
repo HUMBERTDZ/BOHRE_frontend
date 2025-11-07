@@ -58,6 +58,7 @@ export const LoginForm: FC = () => {
 
     if (result.success && result.user) {
       toast.success('Inicio de sesión exitoso');
+      
       const redirectPath = getRedirectPath(result.user.rol);
       navigate(redirectPath, { replace: true });
     }

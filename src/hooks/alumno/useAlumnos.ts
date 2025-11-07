@@ -9,6 +9,7 @@ export const useAlumnos = () => {
       queryKey: ["alumno-semestres", idPersona],
       queryFn: () => fetchAlumnoSemestres(idPersona),
       staleTime: 1000 * 60 * 30, // 30 minutos
+      enabled: !!idPersona,
     });
   };
 

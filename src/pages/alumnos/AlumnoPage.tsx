@@ -9,18 +9,19 @@ import { ActionOptionsMenu, } from "@/components/ui/my/ActionOptionsmenu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export const AlumnoPage = () => {
-  const { user, logout } = useAuth();
+  const { userCompleteData, logout } = useAuth();
+
   const { getAlumnoSemestres, getBoleta } = useAlumnos();
   const [downloading, setDownloading] = useState<number | null>(null);
 
   const { data: semestresData, isLoading } = getAlumnoSemestres(
-    user?.idPersona!
+    userCompleteData?.user.idPersona!
   );
 
   const handleDescargarBoleta = async (idGrupoSemestre: number) => {
     setDownloading(idGrupoSemestre);
     try {
-      await getBoleta(user?.idPersona!, idGrupoSemestre);
+      await getBoleta(userCompleteData?.user.idPersona!, idGrupoSemestre);
     } finally {
       setDownloading(null);
     }

@@ -33,7 +33,7 @@ export const BaseAPI = ({ prefix, isPrivate = true }: BaseAPIOptions = {}): Axio
         if (error.response?.status === 401) {
           const logout = useAuthStore.getState().logout;
           logout();
-          window.location.href = "/auth";
+          window.location.href = "/auth"; // redirige al login
         }
         return Promise.reject(error);
       }

@@ -6,9 +6,10 @@ import { useAuthStore } from '@/store/AuthStore';
 import { useNavigate } from 'react-router';
 
 export const useAuth = () => {
-  const { token, user, isAuthenticated, setAuth, logout: clearAuth, updateUser } = useAuthStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { token, user,userCompleteData, isAuthenticated, setAuth, logout: clearAuth, updateUser } = useAuthStore();
+  const [ loading, setLoading ] = useState<boolean>(false);
+  const [ error, setError ] = useState<string | null>(null);
+  
   const navigate = useNavigate();
 
   // Login
@@ -19,7 +20,8 @@ export const useAuth = () => {
     try {
       const data = await authAPI.login(credentials);
       
-      setAuth(data.access_token, data.user);
+      setAuth(data.access_token, data.user, null);
+      refreshUser();
       
       return { success: true, user: data.user };
     } catch (err) {
@@ -37,7 +39,7 @@ export const useAuth = () => {
   const logout = () => {
     clearAuth();
     setError(null);
-    navigate('/auth');
+    navigate('/auth', { replace: true });
   };
 
   // Validar token al cargar la app
@@ -50,7 +52,7 @@ export const useAuth = () => {
       const result = await authAPI.validateToken();
       
       if (result.valid && result.user) {
-        updateUser(result.user);
+        updateUser(result.user.user, result.user);
         return true;
       } else {
         clearAuth();
@@ -68,7 +70,8 @@ export const useAuth = () => {
   const refreshUser = async () => {
     try {
       const userData = await authAPI.me();
-      updateUser(userData);
+      console.log(userData)
+      updateUser(userData.user, userData);
       return userData;
     } catch {
       clearAuth();
@@ -80,6 +83,7 @@ export const useAuth = () => {
     // Estado
     token,
     user,
+    userCompleteData,
     isAuthenticated,
     loading,
     error,

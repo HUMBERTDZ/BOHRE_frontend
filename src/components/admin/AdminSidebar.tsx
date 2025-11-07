@@ -38,7 +38,7 @@ import { useAuth } from "@/hooks/useAuth";
 export const AdminSidebar = () => {
   // Menu items.
   const items = MenuItemsByRol().admin;
-  const { user, logout } = useAuth();
+  const { userCompleteData, logout } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -124,7 +124,7 @@ export const AdminSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> {user?.nombre} {user?.apellidoPaterno} {user?.apellidoMaterno.charAt(0)}.
+                  <User2 /> {userCompleteData?.persona?.nombre} {userCompleteData?.persona?.apellidoPaterno} {userCompleteData?.persona?.apellidoMaterno.charAt(0)}.
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
